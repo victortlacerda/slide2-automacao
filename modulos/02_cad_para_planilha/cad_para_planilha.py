@@ -188,7 +188,12 @@ class SeletorJanelas:
             xs, ys = zip(*it["pts"])
             self.ax.plot(xs, ys, lw=0.9, color="0.3")
         self.ax.set_aspect("equal")
-        self.ax.margins(0.08)  # folga para desenhar janelas um pouco maiores que as seções
+        # Folga igual em todas as bordas (15% da maior dimensão do desenho), para haver espaço
+        # de clicar fora da seção e arrastar o retângulo, mesmo com seções lado a lado.
+        x0, y0, x1, y1 = bbox([p for it in itens for p in it["pts"]])
+        folga = 0.15 * max(x1 - x0, y1 - y0, 1e-6)
+        self.ax.set_xlim(x0 - folga, x1 + folga)
+        self.ax.set_ylim(y0 - folga, y1 + folga)
         self.ax.grid(alpha=0.3)
         self.janelas, self.artistas = [], []
         self.sel = RectangleSelector(self.ax, lambda a, b: None, useblit=False, button=[1], interactive=True)

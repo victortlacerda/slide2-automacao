@@ -6,7 +6,8 @@
 - Modo `auto`: grupos contidos no retângulo de outro (lentes, bolsões) passam a pertencer a ele,
   em vez de virarem uma seção à parte.
 - Modo `auto`: numeração em ordem de leitura da prancha (linhas de cima para baixo, esquerda → direita).
-- Tela de seleção com folga nas bordas.
+- Tela de seleção com folga fixa de 15% da maior dimensão em todas as bordas, para haver espaço
+  de clicar fora da seção e arrastar o retângulo (antes as seções ficavam coladas na borda).
 
 ### v0.2
 - Modo `auto` mostra as janelas sugeridas no desenho (cada seção numa cor) antes de "Aceitar?";
