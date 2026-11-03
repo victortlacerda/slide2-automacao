@@ -3,20 +3,23 @@
 ## Fase 1: modelo básico (concluída)
 - [x] Gerar `.slim` com boundary e um material a partir de um molde (módulo 01).
 
-## Fase 2: CAD para planilha (concluída, v0.3)
+## Fase 2: CAD para planilha (concluída, v0.4)
 - [x] Ler DXF, delimitar seções por janela, fechar regiões, gerar planilha e prévias (módulo 02).
 - [x] Modo auto mostrando as janelas sugeridas no desenho antes de aceitar.
 - [x] Modo auto: lentes ficam na seção envolvente; numeração em ordem de leitura da prancha.
-- [ ] Seções empilhadas na prancha: opção de cota de referência (hoje só o X pode ser deslocado; o Y é mantido).
+- [x] Seções empilhadas na prancha: coluna opcional de cota real na aba Secoes.
 - [ ] Testar com DXF real com camadas de solo desenhadas.
-- [ ] Confirmar a tela de seleção (modo `janela`) no computador do usuário.
+- [x] Confirmar a tela de seleção (modo `janela`) no computador do usuário.
 
 ## Fase 3: planilha para `.slim` (módulo 03)
 Precisa das amostras do Slide2, cada uma salva a partir do `vazio.slim` com **uma única mudança**
 (anotar os valores digitados):
-- [ ] Duas camadas: fronteira interna + 2 materiais com valores diferentes.
+- [x] Duas camadas: fronteira interna + 2 materiais com valores diferentes (amostra a01).
 - [ ] Só Bishop; só Fellenius; Bishop + Fellenius (e outros métodos que forem usados).
-- [ ] Direção da ruptura esquerda → direita.
+- [x] Direção da ruptura esquerda → direita (amostra a01).
+- [x] Primeira versão já com nível d'água e sobrecarga (decisão #8).
+- [ ] NA que não coincide com vértices (inclinado, cruzando a interface).
+- [ ] Orientação usada na carga distribuída da a01 (para decifrar `orient: 4`).
 
 Entregas:
 - [ ] Várias camadas por seção, materiais da planilha.
@@ -43,6 +46,5 @@ Entregas:
 - Memorial de cálculo automático.
 
 ## Decisões em aberto
-- Primeira versão do módulo 03 já com água e sobrecarga, ou só geometria e materiais?
 - O que ler dos resultados: só o FS mínimo por método, ou também a superfície crítica?
 - FS-alvo: por seção, por cenário, ou só reportar?

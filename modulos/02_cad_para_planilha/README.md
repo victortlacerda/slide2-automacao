@@ -53,6 +53,11 @@ baixo, e da esquerda para a direita na mesma altura.
 
 Nenhuma saída sobrescreve arquivos existentes.
 
+**Cota real (opcional).** Na aba `Secoes`, a coluna "Cota real do ponto mais alto" serve para seções
+que não estão na cota verdadeira no desenho, como as empilhadas numa prancha. Informe a cota real do
+ponto mais alto da seção, e o módulo 03 desloca a seção inteira em Y. Não muda o FS; importa quando
+nível d'água, cargas ou relatório estão em cota real.
+
 ## Validações
 
 - **Pontas soltas:** avisa as coordenadas e desenha em vermelho tracejado na prévia.

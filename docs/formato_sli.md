@@ -1,6 +1,7 @@
 # O que se sabe do formato do Slide2
 
-Levantado a partir do `vazio.slim` (Slide2, `version: 6.020`). O formato não é documentado pela
+Levantado a partir do `vazio.slim` (Slide2, `version: 6.020`) e das amostras em
+[`amostras_slide2/`](amostras_slide2). O formato não é documentado pela
 Rocscience; cada item abaixo deve ser confirmado com amostras salvas pelo próprio programa.
 
 ## O pacote `.slim`
@@ -46,3 +47,26 @@ Ao gerar um novo modelo, os três membros são renomeados para o nome do novo ar
 - O nome interno dos materiais é fixo (`soil1`...`soil20`); o nome do usuário fica na planilha.
 - Para descobrir o formato de um recurso: salve o `vazio.slim` com **uma única mudança** e
   compare os dois `.sli`.
+
+## Amostra a01: duas camadas, NA, ruptura esquerda → direita, cargas
+
+Arquivo: [`amostras_slide2/a01_duas_camadas_na_esq-dir_cargas.slim`](amostras_slide2/a01_duas_camadas_na_esq-dir_cargas.slim).
+Geometria: base −15, talude de (20, 0) a (23, −6), interface em y = −6 de x = 0 a 23; NA em y = −6
+de x = 0 a 43; carga distribuída de 100 kPa de x = 0 a 20; carga em linha de 200 kN/m em x = 20.
+
+| Recurso | Como fica no `.sli` | Confirmado |
+|---|---|---|
+| Direção | `direction: left to right` | sim |
+| Materiais | `soil1 = ... c: 10 phi: 28 uw: 18`, `soil2 = ... c: 15 phi: 25 uw: 20` | sim |
+| Camadas | `cells` triangulados **por região**, cada triângulo com o seu `material:`; a interface entra em `geometry info` com tipo `3` (vértice inicial com flag 0, final com flag 1) | sim |
+| Vértice da interface no contorno | O ponto (0, −6) vira vértice e entra na lista `exterior` | sim |
+| NA no material | `wtable: 1` em **todos** os materiais (Water Surface = Water Table) | sim |
+| Linha d'água | `water table:` com `vertices: [7,3]`, ou seja, **índices** da lista de vértices | parcial: o NA coincidia com vértices existentes |
+| Carga distribuída | em `forces`: `type: 0 x1 y1 x2 y2 angle: 270 load: 100 load2: 100` (angle 270 = vertical para baixo; `load2` = valor no fim, para trapezoidal) + bloco `dist load group` (`orient: 4`, `type: 0` = constante, `params: 1` → 100) | parcial: código de `orient` a confirmar |
+| Carga em linha | em `forces`: `type: 1 x1 y1 angle: 270 load: 200` | sim |
+| Estatística das cargas | bloco `stats params loads` com uma entrada por carga (`2 0 0 0 is_on: 0`) | sim (valores padrão) |
+| Limites de busca | `slope limits` do ponto mais à esquerda ao mais à direita do terreno | sim |
+
+Pendências: uma amostra com **NA que não coincide com vértices** (inclinado, cruzando a interface),
+para ver se os pontos do NA entram na lista `vertices`; e saber qual orientação foi escolhida na
+carga distribuída, para decifrar `orient: 4`.

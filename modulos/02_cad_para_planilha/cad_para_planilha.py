@@ -52,7 +52,7 @@ except ImportError as exc:  # pragma: no cover
     sys.exit(f"Falta a biblioteca '{exc.name}'. Instale com:\n"
              "  pip install ezdxf shapely openpyxl matplotlib")
 
-VERSAO = "0.3"
+VERSAO = "0.4"
 EPS = 1e-9
 UNIDADES = {"m": 1.0, "cm": 0.01, "mm": 0.001}
 INSUNITS_NOME = {4: "mm", 5: "cm", 6: "m"}
@@ -530,6 +530,9 @@ def gravar_xlsx(caminho, secoes, config, previas):
         "2) Aba Previas (ou os PNG ao lado da planilha): veja o número de cada região da seção.",
         "3) Aba Regioes: escolha o Material de cada região na lista suspensa (coluna F).",
         "4) Aba Secoes: coluna 'Ativa' = n exclui a seção da análise. Leia a coluna Avisos.",
+        "   Coluna 'Cota real do ponto mais alto' (opcional): se a seção não está na cota real no desenho",
+        "   (ex.: seções empilhadas na prancha), informe a cota verdadeira do ponto mais alto da seção;",
+        "   a seção inteira é deslocada em Y para essa cota. Use quando NA, cargas ou relatório estiverem em cota real.",
         "5) Não altere as abas Vertices e Origem; o próximo script lê as coordenadas de lá.",
         "",
         "Unidades: coordenadas em metros; cota (Y) mantém o valor do desenho.",
@@ -555,9 +558,10 @@ def gravar_xlsx(caminho, secoes, config, previas):
 
     wsec = wb.create_sheet("Secoes")
     wsec.append(["Seção", "Nome", "Ativa (s/n)", "Regiões", "Área total (m²)", "X mín (m)", "X máx (m)",
-                 "Cota mín (m)", "Cota máx (m)", "Deslocamento X aplicado (m)", "Avisos",
+                 "Cota mín (m)", "Cota máx (m)", "Deslocamento X aplicado (m)",
+                 "Cota real do ponto mais alto (m, opcional)", "Avisos",
                  "Janela no CAD (xmin; ymin; xmax; ymax)"])
-    estilizar_cabecalho(wsec, 12)
+    estilizar_cabecalho(wsec, 13)
     wreg = wb.create_sheet("Regioes")
     wreg.append(["Seção", "Região", "Área (m²)", "X do rótulo (m)", "Cota do rótulo (m)", "Material", "Observações"])
     estilizar_cabecalho(wreg, 7)
@@ -571,8 +575,9 @@ def gravar_xlsx(caminho, secoes, config, previas):
         wsec.append([n, sec["nome"], "s", len(sec["regioes"]), round(sec["area_total"], 4),
                      None if b[0] is None else round(b[0], 4), None if b[2] is None else round(b[2], 4),
                      None if b[1] is None else round(b[1], 4), None if b[3] is None else round(b[3], 4),
-                     round(sec["desloc_x"], 4), " | ".join(sec["avisos"]) or "ok",
+                     round(sec["desloc_x"], 4), None, " | ".join(sec["avisos"]) or "ok",
                      f"{j['xmin']:.4f}; {j['ymin']:.4f}; {j['xmax']:.4f}; {j['ymax']:.4f}"])
+        wsec.cell(row=wsec.max_row, column=11).fill = amarelo
         for r in sec["regioes"]:
             wreg.append([n, r["id"], round(r["area"], 4), round(r["rp"][0], 4), round(r["rp"][1], 4), None, None])
             wreg.cell(row=wreg.max_row, column=6).fill = amarelo
@@ -587,7 +592,7 @@ def gravar_xlsx(caminho, secoes, config, previas):
         dv.errorTitle = "Material inválido"
         wreg.add_data_validation(dv)
         dv.add(f"F2:F{wreg.max_row}")
-    largura(wsec, [8, 14, 11, 9, 15, 11, 11, 12, 12, 16, 70, 44])
+    largura(wsec, [8, 14, 11, 9, 15, 11, 11, 12, 12, 16, 20, 70, 44])
     largura(wreg, [8, 9, 12, 14, 16, 28, 36])
     largura(wver, [8, 9, 16, 8, 14, 14])
     wsec.row_dimensions[1].height = 45

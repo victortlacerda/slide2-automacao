@@ -89,6 +89,9 @@ def test_planilha_gerada():
         wb = openpyxl.load_workbook(saida)
         assert wb.sheetnames == ["LEIA-ME", "Materiais", "Secoes", "Regioes", "Vertices", "Previas", "Origem"]
         assert wb["Regioes"].max_row == 3
+        cab = [c.value for c in wb["Secoes"][1]]
+        assert "Cota real do ponto mais alto (m, opcional)" in cab and cab.index("Avisos") == 11
+        assert wb["Secoes"].cell(row=2, column=11).value is None  # o usuário preenche
         dv = wb["Regioes"].data_validations.dataValidation[0]
         assert dv.formula1 == "=Materiais!$A$2:$A$21"
         assert len(wb["Previas"]._images) == 2

@@ -2,6 +2,10 @@
 
 ## Módulo 02: cad_para_planilha
 
+### v0.4
+- Aba Secoes: coluna opcional "Cota real do ponto mais alto" para seções que não estão na cota
+  real no desenho (ex.: empilhadas na prancha). O módulo 03 desloca a seção em Y para essa cota.
+
 ### v0.3
 - Modo `auto`: grupos contidos no retângulo de outro (lentes, bolsões) passam a pertencer a ele,
   em vez de virarem uma seção à parte.
