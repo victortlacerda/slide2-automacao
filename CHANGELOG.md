@@ -2,6 +2,12 @@
 
 ## Módulo 02: cad_para_planilha
 
+### v0.3
+- Modo `auto`: grupos contidos no retângulo de outro (lentes, bolsões) passam a pertencer a ele,
+  em vez de virarem uma seção à parte.
+- Modo `auto`: numeração em ordem de leitura da prancha (linhas de cima para baixo, esquerda → direita).
+- Tela de seleção com folga nas bordas.
+
 ### v0.2
 - Modo `auto` mostra as janelas sugeridas no desenho (cada seção numa cor) antes de "Aceitar?";
   sem tela gráfica, grava `<dxf>_janelas_sugeridas.png`.

@@ -113,6 +113,21 @@ def test_auto_agrupa_e_mostra_fusao_por_linha_comum():
         assert png.is_file()
 
 
+def test_auto_prancha_em_grade_com_lente():
+    """Lente que não toca nada fica na seção que a contém; numeração em ordem de leitura."""
+    dxf = RAIZ / "exemplos" / "quatro_secoes_em_grade.dxf"
+    doc = ezdxf.readfile(dxf)
+    itens, _ = cpp.coletar(doc.modelspace(), 0.005)
+    itens = [it for it in itens if it["camada"] == "SECOES"]
+    jans = cpp.detectar_grupos(itens, 0.001)
+    assert len(jans) == 4
+    cantos = [(round(j["xmin"]), round(j["ymax"])) for j in jans]
+    assert cantos == [(0, 6), (60, 8), (0, -32), (60, -35)]   # A-A, B-B, C-C, D-D
+    por, _, _ = cpp.atribuir(itens, jans)
+    d = cpp.processar_secao("D", por[3], 1.0, 1.0, False, 0.001, 1e-4)
+    assert len(d["regioes"]) == 2 and any("furo" in a for a in d["avisos"])
+
+
 def test_seletor_de_janelas():
     import matplotlib.pyplot as plt
     dxf = RAIZ / "exemplos" / "duas_secoes_linhas_e_polilinha.dxf"

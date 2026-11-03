@@ -52,7 +52,7 @@ except ImportError as exc:  # pragma: no cover
     sys.exit(f"Falta a biblioteca '{exc.name}'. Instale com:\n"
              "  pip install ezdxf shapely openpyxl matplotlib")
 
-VERSAO = "0.2"
+VERSAO = "0.3"
 EPS = 1e-9
 UNIDADES = {"m": 1.0, "cm": 0.01, "mm": 0.001}
 INSUNITS_NOME = {4: "mm", 5: "cm", 6: "m"}
@@ -188,6 +188,7 @@ class SeletorJanelas:
             xs, ys = zip(*it["pts"])
             self.ax.plot(xs, ys, lw=0.9, color="0.3")
         self.ax.set_aspect("equal")
+        self.ax.margins(0.08)  # folga para desenhar janelas um pouco maiores que as seções
         self.ax.grid(alpha=0.3)
         self.janelas, self.artistas = [], []
         self.sel = RectangleSelector(self.ax, lambda a, b: None, useblit=False, button=[1], interactive=True)
@@ -265,11 +266,31 @@ def detectar_grupos(itens, tol):
     grupos = defaultdict(list)
     for i in range(len(geoms)):
         grupos[raiz(i)].append(i)
+    caixas = [[bbox([p for k in m for p in itens[k]["pts"]]), m] for m in grupos.values()]
+
+    # Um grupo que cabe inteiro no retângulo de outro (lente, bolsão que não toca nada) pertence a ele.
+    caixas.sort(key=lambda c: -(c[0][2] - c[0][0]) * (c[0][3] - c[0][1]))
+    finais = []
+    for cx, membros in caixas:
+        dono = next((f for f in finais if f[0][0] <= cx[0] and f[0][1] <= cx[1]
+                     and cx[2] <= f[0][2] and cx[3] <= f[0][3]), None)
+        if dono:
+            dono[1] = dono[1] + membros
+        else:
+            finais.append([cx, membros])
+
+    # Ordem de leitura da prancha: linhas de cima para baixo; em cada linha, da esquerda para a direita.
+    finais.sort(key=lambda c: -c[0][3])
+    linhas = []
+    for c in finais:
+        if linhas and c[0][3] > min(o[0][1] for o in linhas[-1]):  # topo acima da base de quem está na linha
+            linhas[-1].append(c)
+        else:
+            linhas.append([c])
     janelas = []
-    for membros in sorted(grupos.values(), key=lambda m: min(bbox(itens[k]["pts"])[0] for k in m)):
-        todos = [p for k in membros for p in itens[k]["pts"]]
-        x0, y0, x1, y1 = bbox(todos)
-        janelas.append({"nome": f"Secao_{len(janelas) + 1:02d}", "xmin": x0, "ymin": y0, "xmax": x1, "ymax": y1})
+    for linha in linhas:
+        for (x0, y0, x1, y1), _ in sorted(linha, key=lambda c: c[0][0]):
+            janelas.append({"nome": f"Secao_{len(janelas) + 1:02d}", "xmin": x0, "ymin": y0, "xmax": x1, "ymax": y1})
     return janelas
 
 

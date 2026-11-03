@@ -57,7 +57,56 @@ def casos_de_desenho(caminho):
     doc.saveas(caminho)
 
 
+
+def quatro_secoes_em_grade(caminho):
+    """Quatro seções numa prancha 2 x 2 (exemplo das imagens do README).
+
+    Variações: camadas em LINEs soltas, em polilinhas, talude 1:1 com berma e duas camadas.
+    """
+    doc = ezdxf.new("R2010")
+    doc.header["$INSUNITS"] = 6
+    msp = doc.modelspace()
+    for nome in ("SECOES", "TEXTOS"):
+        doc.layers.add(nome)
+    S = {"dxfattribs": {"layer": "SECOES"}}
+
+    def texto(t, x, y):
+        msp.add_text(t, dxfattribs={"layer": "TEXTOS", "height": 1.6}).set_placement((x, y))
+
+    # (0, 0): três camadas em linhas soltas
+    ox, oy = 0, 0
+    pts = [(0, 0), (20, 0), (23, 6), (43, 6)]
+    for a, b in zip(pts, pts[1:]):
+        msp.add_line((a[0] + ox, a[1] + oy), (b[0] + ox, b[1] + oy), **S)
+    for a, b in [((0, 0), (0, -15)), ((43, 6), (43, -15)), ((0, -15), (43, -15)), ((0, -3), (43, -3)),
+                 ((0, -8), (43, -10))]:
+        msp.add_line((a[0] + ox, a[1] + oy), (b[0] + ox, b[1] + oy), **S)
+    texto("SECAO A-A", ox, oy + 9)
+
+    # (60, 0): três camadas em polilinhas fechadas
+    ox, oy = 60, 0
+    sh = lambda p: [(x + ox, y + oy) for x, y in p]
+    msp.add_lwpolyline(sh([(0, 0), (18, 0), (24, 8), (43, 8), (43, -4), (0, -2)]), close=True, **S)
+    msp.add_lwpolyline(sh([(0, -2), (43, -4), (43, -9), (0, -9)]), close=True, **S)
+    msp.add_lwpolyline(sh([(0, -9), (43, -9), (43, -16), (0, -16)]), close=True, **S)
+    texto("SECAO B-B", ox, oy + 11)
+
+    # (0, -40): talude 1:1 com berma, duas camadas
+    ox, oy = 0, -40
+    msp.add_lwpolyline(sh([(0, 0), (15, 0), (19, 4), (23, 4), (27, 8), (43, 8), (43, -5), (0, -5)]), close=True, **S)
+    msp.add_lwpolyline(sh([(0, -5), (43, -5), (43, -15), (0, -15)]), close=True, **S)
+    texto("SECAO C-C", ox, oy + 11)
+
+    # (60, -40): talude baixo com lente de argila
+    ox, oy = 60, -40
+    msp.add_lwpolyline(sh([(0, 0), (22, 0), (26, 5), (43, 5), (43, -14), (0, -14)]), close=True, **S)
+    msp.add_lwpolyline(sh([(8, -6), (30, -5), (30, -8), (8, -9)]), close=True, **S)
+    texto("SECAO D-D", ox, oy + 8)
+    doc.saveas(caminho)
+
+
 if __name__ == "__main__":
     import sys
     tres_camadas(sys.argv[1] if len(sys.argv) > 1 else "tres_camadas.dxf")
     casos_de_desenho(sys.argv[2] if len(sys.argv) > 2 else "casos_de_desenho.dxf")
+    quatro_secoes_em_grade(sys.argv[3] if len(sys.argv) > 3 else "quatro_secoes_em_grade.dxf")

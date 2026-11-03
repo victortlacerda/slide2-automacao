@@ -35,8 +35,9 @@ com 6 vértices conta como 1. Textos, cotas e hachuras são ignorados.
 
 **Seções.** Só entram numa seção as entidades **inteiras** dentro da janela; as cortadas são
 avisadas. No modo `auto`, peças que se tocam (ou ficam a menos de 1 mm) formam um grupo, e cada
-grupo vira uma seção. O desenho com as janelas sugeridas é exibido (ou gravado em PNG, sem tela)
-antes da pergunta "Aceitar?". O auto erra quando duas seções compartilham uma linha (moldura,
+grupo vira uma seção; um grupo que cabe inteiro no retângulo de outro (lente que não toca nada) fica
+nessa seção. A numeração segue a prancha: linhas de cima para baixo, esquerda → direita. O desenho
+com as janelas sugeridas é exibido (ou gravado em PNG, sem tela) antes da pergunta "Aceitar?". O auto erra quando duas seções compartilham uma linha (moldura,
 eixo, linha de base): elas viram uma só. Nesse caso, use o modo `janela`.
 
 **Regiões.** Dentro de cada seção, as linhas são cortadas em todo cruzamento, pontas e vértices

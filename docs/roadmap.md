@@ -3,9 +3,11 @@
 ## Fase 1: modelo básico (concluída)
 - [x] Gerar `.slim` com boundary e um material a partir de um molde (módulo 01).
 
-## Fase 2: CAD para planilha (concluída, v0.2)
+## Fase 2: CAD para planilha (concluída, v0.3)
 - [x] Ler DXF, delimitar seções por janela, fechar regiões, gerar planilha e prévias (módulo 02).
 - [x] Modo auto mostrando as janelas sugeridas no desenho antes de aceitar.
+- [x] Modo auto: lentes ficam na seção envolvente; numeração em ordem de leitura da prancha.
+- [ ] Seções empilhadas na prancha: opção de cota de referência (hoje só o X pode ser deslocado; o Y é mantido).
 - [ ] Testar com DXF real com camadas de solo desenhadas.
 - [ ] Confirmar a tela de seleção (modo `janela`) no computador do usuário.
 
