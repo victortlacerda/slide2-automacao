@@ -1,0 +1,5 @@
+# Módulo 02 (cad_para_planilha) e seguintes. O módulo 01 não precisa de nada.
+ezdxf>=1.1
+shapely>=2.0
+openpyxl>=3.1
+matplotlib>=3.5

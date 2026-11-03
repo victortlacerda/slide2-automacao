@@ -1,0 +1,10 @@
+# Modelos do Slide2 são ZIP: nunca converter fim de linha
+*.slim binary
+*.sli  -text
+*.slv  -text
+*.sltm -text
+# DXF: preservar exatamente como o CAD gravou
+*.dxf  -text
+*.dwg  binary
+*.py   text eol=lf
+*.md   text eol=lf

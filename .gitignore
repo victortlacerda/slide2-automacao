@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Saídas geradas pelos scripts (não versionar resultados de cada rodada)
+*_secoes.xlsx
+*_secoes_*.xlsx
+*_secoes.json
+*_secoes_*.json
+*_previas/
+*_janelas_sugeridas*.png
+*_editado*.slim
+saidas/
+
+# Arquivos de trabalho do CAD e do Office
+*.bak
+*.dwl
+*.dwl2
+~$*
+
+# Material de estudo com direitos de terceiros (manter fora do repositório)
+*.pdf
+
+# Sistema
+.DS_Store
+Thumbs.db
