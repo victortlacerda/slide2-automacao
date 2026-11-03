@@ -18,8 +18,9 @@ Precisa das amostras do Slide2, cada uma salva a partir do `vazio.slim` com **um
 - [ ] Só Bishop; só Fellenius; Bishop + Fellenius (e outros métodos que forem usados).
 - [x] Direção da ruptura esquerda → direita (amostra a01).
 - [x] Primeira versão já com nível d'água e sobrecarga (decisão #8).
-- [ ] NA que não coincide com vértices (inclinado, cruzando a interface).
-- [ ] Orientação usada na carga distribuída da a01 (para decifrar `orient: 4`).
+- [x] NA que não coincide com vértices (amostra a02).
+- [x] Orientação da carga distribuída: `orient: 4` = vertical (amostra a02).
+- [x] Origem dos dados: NA do CAD ou da planilha; cargas só da planilha.
 
 Entregas:
 - [ ] Várias camadas por seção, materiais da planilha.

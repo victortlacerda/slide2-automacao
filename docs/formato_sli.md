@@ -67,6 +67,27 @@ de x = 0 a 43; carga distribuída de 100 kPa de x = 0 a 20; carga em linha de 20
 | Estatística das cargas | bloco `stats params loads` com uma entrada por carga (`2 0 0 0 is_on: 0`) | sim (valores padrão) |
 | Limites de busca | `slope limits` do ponto mais à esquerda ao mais à direita do terreno | sim |
 
-Pendências: uma amostra com **NA que não coincide com vértices** (inclinado, cruzando a interface),
-para ver se os pontos do NA entram na lista `vertices`; e saber qual orientação foi escolhida na
-carga distribuída, para decifrar `orient: 4`.
+## Amostra a02: NA inclinado e carga em linha inclinada
+
+Arquivo: [`amostras_slide2/a02_na_inclinado_carga_inclinada.slim`](amostras_slide2/a02_na_inclinado_carga_inclinada.slim).
+Mesmo modelo da a01, com o NA passando por 10 pontos próprios (descendo da borda esquerda, um
+trecho plano em y ≈ −9,9 e subindo até a borda direita) e uma carga em linha de 100 kN/m inclinada.
+
+| Recurso | Como fica no `.sli` | Confirmado |
+|---|---|---|
+| Pontos do NA | **acrescentados ao fim da lista `vertices`** (8 a 17); não entram em `cells`, `exterior` nem `geometry info` | sim |
+| Linha d'água | `water table: vertices: [7,8,...,17,3]`: começa e termina em vértices do contorno (bordas esquerda e direita) | sim |
+| Carga em linha inclinada | `type: 1 x1: 28.15 y1: -6 angle: 330 load: 100`; ângulo em graus a partir do eixo +x, anti-horário (270 = para baixo; 330 = para baixo e para a direita, 30° abaixo da horizontal) | sim |
+| Orientação da carga distribuída | `orient: 4` = **Vertical** (informado pelo usuário: as cargas da a01 eram verticais para baixo) | sim |
+| Estatística das cargas | uma entrada `begin: k end: k num: 1` por carga | sim |
+
+A confirmar no módulo 03:
+- O NA começa e termina em vértices que **já existiam** no contorno. Se a borda não tiver um vértice
+  nessa cota, o plano é inserir o vértice no contorno, como acontece com a interface de material.
+- `dist load group` tem `begin`/`end`: provavelmente uma carga distribuída que atravessa uma quebra do
+  terreno vira várias linhas em `forces`, agrupadas por esse intervalo.
+
+## Origem dos dados no módulo 03 (decisão do usuário)
+
+- **NA:** do CAD (camada própria) **ou** da planilha.
+- **Cargas:** só da planilha.
