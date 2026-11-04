@@ -137,7 +137,7 @@ def test_fluxo_completo_cad_planilha_slim():
         wb.save(xlsx)
         saida = d / "modelos"
         with redirect_stdout(io.StringIO()) as out:
-            rc = p2s.main([str(xlsx), "--direcao", "dir-esq", "--metodos", "1,9", "--saida", str(saida)])
+            rc = p2s.main([str(xlsx), "--direcao", "dir-esq", "--metodos", "1,9", "--superficie", "circular", "--busca", "autorefine", "--saida", str(saida)])
         assert rc == 0, out.getvalue()
         modelos = sorted(saida.glob("*.slim"))
         assert [m.stem for m in modelos] == ["Secao_01", "Secao_02", "Secao_03", "Secao_04"]
@@ -162,6 +162,45 @@ def test_fluxo_completo_cad_planilha_slim():
         # repetir pelo JSON, sem perguntas
         with redirect_stdout(io.StringIO()):
             assert p2s.main(["--config", str(saida / "respostas.json"), "--saida", str(d / "r")]) == 0
+
+
+def test_codigos_de_busca_iguais_as_amostras_do_slide():
+    """Cada combinação de superfície/busca grava os mesmos campos que o Slide gravou nas amostras."""
+    sec, materiais = secao_a02()
+    base = ler_sli(RAIZ / "modulos" / "01_modelo_basico" / "modelo_base" / "vazio.slim")
+    geo = p2s.montar_secao(sec, materiais, "left to right")
+    pasta = RAIZ / "docs" / "amostras_slide2" / "busca"
+    casos = {"01_circular_slope_search.slim": ("circular", "slope"),
+             "02_circular_auto_refine.slim": ("circular", "autorefine"),
+             "03_nao_circular_block.slim": ("nao_circular", "block"),
+             "04_nao_circular_path.slim": ("nao_circular", "path"),
+             "05_nao_circular_simulated_annealing.slim": ("nao_circular", "annealing"),
+             "06_nao_circular_auto_refine.slim": ("nao_circular", "autorefine")}
+    campo = lambda t, c: re.search(rf"(?m)^\s*{c}:.*$", t).group(0)
+    for arq, (tipo, metodo) in casos.items():
+        slide = ler_sli(pasta / arq)
+        geo["grelha"] = None
+        t = p2s.gerar_sli(base, geo, materiais, ["bishop", "janbu"], {"tipo": tipo, "metodo": metodo})
+        for c in ("mode", "circularsearch", "search"):
+            if tipo == "circular" and c == "search" or tipo != "circular" and c == "circularsearch":
+                continue
+            assert campo(t, c) == campo(slide, c), (arq, c, campo(t, c), campo(slide, c))
+    # grelha: mesma linha que o Slide grava
+    slide = ler_sli(pasta / "07_circular_grid_autogrid.slim")
+    m = re.search(r"x1: (\S+) y1: (\S+)  x2: (\S+) y2: (\S+)  nx: (\d+) ny: (\d+)", bloco(slide, "grids"))
+    geo["grelha"] = tuple(float(v) for v in m.groups()[:4]) + (int(m.group(5)), int(m.group(6)))
+    t = p2s.gerar_sli(base, geo, materiais, ["bishop"], {"tipo": "circular", "metodo": "grid"})
+    assert bloco(t, "grids") == bloco(slide, "grids")
+    assert campo(t, "mode") == "  mode: 0" and campo(t, "circularsearch") == "  circularsearch: 0"
+
+
+def test_grelha_do_script_fica_acima_da_face():
+    terreno = [(0, 0), (20, 0), (23, 6), (43, 6)]
+    assert p2s.grelha_do_script(terreno, "right to left") == (11.0, 6.0, 26.0, 18.0, 20, 20)
+    assert p2s.grelha_do_script(terreno, "left to right") == (17.0, 6.0, 32.0, 18.0, 20, 20)
+    # centro crítico achado pelo Auto Refine do Slide nessa seção (teste no Slide 6.0): dentro da grelha
+    x1, y1, x2, y2, _, _ = p2s.grelha_do_script(terreno)
+    assert x1 < 13.13 < x2 and y1 < 11.06 < y2
 
 
 def test_erros_claros():

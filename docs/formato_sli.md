@@ -129,3 +129,47 @@ O ZIP precisa ser gravado com **cabeçalhos novos**. Copiar os `ZipInfo` do mold
 flags) gera arquivos que o Slide 6.0 recusa com "Parâmetro incorreto". Com cabeçalhos novos,
 comprimidos ou não, o arquivo abre. O nome interno dos membros não precisa coincidir com o nome
 do arquivo (testado), mas os módulos 01 e 03 gravam iguais.
+
+## Busca da superfície (amostras em `amostras_slide2/busca/`)
+
+Salvas no Slide a partir da a02, uma mudança por vez. Campos em `model description`:
+
+| Escolha na janela Surface Options | `mode` | `circularsearch` | `search` |
+|---|---|---|---|
+| Circular, Grid Search | 0 | 0 | — |
+| Circular, Slope Search | 0 | 1 | — |
+| Circular, Auto Refine Search | 0 | 2 | — |
+| Não circular, Block Search | 1 | — | 0 |
+| Não circular, Path Search | 1 | — | 1 |
+| Não circular, Simulated Annealing | 1 | — | 3 |
+| Não circular, Auto Refine Search | 1 | — | 4 |
+
+Os parâmetros de cada busca (número de superfícies, iterações...) ficam nos blocos `grid search`,
+`block search`, `path search`, `simulated annealing search`, `autoslope search` e outros, que já
+existem no molde com os valores padrão.
+
+**Grelhas** (bloco `grids:`), uma linha por grelha:
+`  1: x1: 22.4541491543866 y1: -0.235917798684918  x2: 29.870745771933 y2: 7.18067881886146  nx: 20 ny: 20`
+(`x1, y1` e `x2, y2` = cantos opostos; `nx, ny` = número de intervalos).
+
+**AutoGrid não grava marcador**: o Slide calcula um retângulo e grava só as coordenadas, igual a
+uma grelha manual. A regra de cálculo não está documentada; o módulo 03 não tenta imitá-la e usa
+uma regra própria, declarada no README do módulo.
+
+## Resultados do cálculo (amostra em `amostras_slide2/resultados/`)
+
+- O motor de cálculo é o `aslidew.exe` (na pasta do Slide). Funciona pela linha de comando:
+  `aslidew.exe "modelo.slim"` grava o resultado **dentro** do `.slim` (membro `.s01`);
+  `aslidew.exe "modelo.sli"` grava `modelo.s01` ao lado. Leva poucos segundos por modelo.
+- O código de saída é **2 mesmo quando dá certo**: confirme pelo `.s01`, não pelo código.
+- O `.s01` é texto. Blocos marcados por linhas que começam com `*`:
+  - `* Analysis names`: métodos calculados, um por linha.
+  - `* Global Minimum FS (xc,yc,r,x1,y1,x2,y2,fs,name)`: **uma linha por método** com centro e raio
+    do círculo crítico, pontos de entrada e saída, FS e nome do método.
+  - `* Global Minimum Text`: momentos/forças resistentes e atuantes da superfície crítica.
+  - `* minimum slice info ... method=<nome>`: fatias da superfície crítica (x, topo, base).
+  - `* Factor of Safety Computation Counters`: superfícies válidas e inválidas por método.
+  - Antes disso, todas as superfícies de cada centro da grelha (`r, yleft, x1, y1, x2, y2, yright, FS...`);
+    FS = -103 marca superfície inválida.
+- Conferido: a mesma amostra calculada pela interface e pela linha de comando dá o mesmo FS
+  (Bishop 0,316616; Janbu 0,297976).

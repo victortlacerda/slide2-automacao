@@ -51,9 +51,9 @@ cada região ganha seu material por lista suspensa. As prévias numeradas també
 | Pasta | O que faz | Situação |
 |---|---|---|
 | [`01_modelo_basico`](modulos/01_modelo_basico) | Cria um `.slim` com contorno externo e um material a partir de um modelo-base | Funciona; primeiro teste |
-| [`02_cad_para_planilha`](modulos/02_cad_para_planilha) | DXF → seções → regiões → planilha-padrão com prévias, NA do CAD | **v0.5**, testado |
-| [`03_planilha_para_slim`](modulos/03_planilha_para_slim) | Planilha → um `.slim` por seção: camadas, NA, cargas, direção e métodos | **v0.1**, validado contra amostra do Slide2 |
-| Cálculo em lote | Rodar o Slide2 e tabelar o FS de cada seção | Planejado |
+| [`02_cad_para_planilha`](modulos/02_cad_para_planilha) | DXF → seções → regiões → planilha-padrão com prévias, NA do CAD, grelha | **v0.6**, testado |
+| [`03_planilha_para_slim`](modulos/03_planilha_para_slim) | Planilha → um `.slim` por seção: camadas, NA, cargas, direção, métodos e busca | **v0.4**, validado no Slide2 |
+| [`04_calculo_em_lote`](modulos/04_calculo_em_lote) | Calcula os `.slim` com o `aslidew.exe`, tabela o FS por seção e método, avisa mínimo na borda da grelha | **v0.1**, testado no Slide2 |
 
 Próximos passos em [`docs/roadmap.md`](docs/roadmap.md); formato do arquivo do Slide2 em
 [`docs/formato_sli.md`](docs/formato_sli.md).
@@ -77,8 +77,11 @@ python modulos/02_cad_para_planilha/cad_para_planilha.py
 # Repetir uma rodada sem perguntas
 python modulos/02_cad_para_planilha/cad_para_planilha.py --config desenho_secoes.json
 
-# Planilha -> um .slim por seção (pergunta direção e métodos no terminal)
+# Planilha -> um .slim por seção (pergunta direção, métodos e busca no terminal)
 python modulos/03_planilha_para_slim/planilha_para_slim.py
+
+# Calcular todos os modelos da pasta e tabelar o FS
+python modulos/04_calculo_em_lote/calcular_lote.py pasta_dos_modelos --fs-alvo 1.5
 
 # Modelo básico com boundary e um material
 python modulos/01_modelo_basico/slide2_editar_modelo.py

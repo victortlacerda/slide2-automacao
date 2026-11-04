@@ -1,6 +1,26 @@
 # Registro de mudanças
 
+## Módulo 04: calcular_lote
+
+### v0.1
+- Calcula uma pasta de `.slim` com o `aslidew.exe` do Slide2 (resultado gravado dentro do `.slim`).
+- Lê o FS mínimo global por método, a superfície crítica e os contadores de superfícies.
+- Avisos: centro na borda da grelha, superfície no limite de busca ou no fundo, FS inválido, FS-alvo.
+- `resultados.xlsx` (Resumo, Figuras, Origem) e uma figura por seção.
+- Caminho do `aslidew.exe` salvo em `~/.slide2_automacao.json`. Testado no Slide 6.0 do usuário.
+
 ## Módulo 03: planilha_para_slim
+
+### v0.4
+- Grelha automática nova: estende 1,5 H para o lado do pé (segundo a direção escolhida), 0,5 H para
+  o lado da crista, do topo a topo + 2 H. Com a regra da v0.3, os 4 mínimos do teste no Slide caíram
+  na borda da grelha; com a nova, nenhum.
+
+### v0.3
+- Tipo de superfície e busca perguntados no terminal (`--superficie`, `--busca`): circular (Grid,
+  Slope, Auto Refine) e não circular (Block, Path, Simulated Annealing, Auto Refine).
+- Grid Search: grelha da aba Grelha ou automática (regra própria; o AutoGrid do Slide não é imitado).
+- Prévia mostra a grelha. Aviso para Block Search (objetos de busca não gravados).
 
 ### v0.2
 - **Correção:** o `.slim` passa a ser gravado com cabeçalhos ZIP novos. Os herdados do molde faziam o
@@ -18,6 +38,9 @@
 - Validado reconstruindo a amostra a02 do Slide2 bloco a bloco.
 
 ## Módulo 02: cad_para_planilha
+
+### v0.6
+- Nova aba Grelha (Seção, X1, Y1, X2, Y2, nx, ny) para Grid Search com grelha definida pelo usuário.
 
 ### v0.5
 - Pergunta a camada CAD do nível d'água e grava os pontos de cada seção na nova aba NA (origem CAD).

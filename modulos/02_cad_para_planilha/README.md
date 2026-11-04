@@ -47,7 +47,7 @@ baixo, e da esquerda para a direita na mesma altura.
 
 ## Saídas
 
-- `<dxf>_secoes.xlsx`: abas LEIA-ME, **Materiais**, **Secoes**, **Regioes**, Vertices, Previas, Origem.
+- `<dxf>_secoes.xlsx`: abas LEIA-ME, **Materiais**, **Secoes**, **Regioes**, Vertices, **NA** (do CAD ou digitado), **Cargas** e **Grelha** (preenchidas pelo usuário, se usadas), Previas, Origem.
 - `<dxf>_secoes_previas/`: um PNG por seção com as regiões numeradas.
 - `<dxf>_secoes.json`: respostas e janelas da rodada (reuse com `--config`).
 

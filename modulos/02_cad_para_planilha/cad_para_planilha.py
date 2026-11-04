@@ -52,7 +52,7 @@ except ImportError as exc:  # pragma: no cover
     sys.exit(f"Falta a biblioteca '{exc.name}'. Instale com:\n"
              "  pip install ezdxf shapely openpyxl matplotlib")
 
-VERSAO = "0.5"
+VERSAO = "0.6"
 EPS = 1e-9
 UNIDADES = {"m": 1.0, "cm": 0.01, "mm": 0.001}
 INSUNITS_NOME = {4: "mm", 5: "cm", 6: "m"}
@@ -554,7 +554,8 @@ def gravar_xlsx(caminho, secoes, config, previas):
         "   vieram do desenho e acompanham a seção; linhas digitadas (Origem = planilha ou vazio) estão em cota real.",
         "6) Aba Cargas (opcional): uma linha por carga. Distribuída: X início, X fim e kPa. Linha: X e kN/m.",
         "   O X é o da seção (o mesmo das abas Vertices e Previas); a carga é posta sobre o terreno.",
-        "7) Não altere as abas Vertices e Origem; o próximo script lê as coordenadas de lá.",
+        "7) Aba Grelha (opcional): grelha de centros por seção (cantos X1,Y1 e X2,Y2 e intervalos), para Grid Search.",
+        "8) Não altere as abas Vertices e Origem; o próximo script lê as coordenadas de lá.",
         "",
         "Unidades: coordenadas em metros; cota (Y) mantém o valor do desenho.",
         "Modelo de resistência previsto: Mohr-Coulomb (γ, c', φ').",
@@ -640,6 +641,16 @@ def gravar_xlsx(caminho, secoes, config, previas):
     dvt.add("B2:B1000")
     largura(wc, [8, 22, 13, 22, 24, 36, 36])
     wc.row_dimensions[1].height = 45
+
+    wg = wb.create_sheet("Grelha")
+    wg.append(["Seção", "X1 (m)", "Y1 (m)", "X2 (m)", "Y2 (m)", "nx (intervalos)", "ny (intervalos)"])
+    estilizar_cabecalho(wg, 7)
+    for n, _ in enumerate(secoes, 1):
+        wg.append([n, None, None, None, None, 20, 20])
+        for c in range(2, 8):
+            wg.cell(row=wg.max_row, column=c).fill = amarelo
+    largura(wg, [8, 12, 12, 12, 12, 16, 16])
+    wg.row_dimensions[1].height = 32
 
     wp = wb.create_sheet("Previas")
     linha = 1

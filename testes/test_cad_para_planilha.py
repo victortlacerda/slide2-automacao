@@ -88,7 +88,7 @@ def test_planilha_gerada():
                            "--saida", str(saida)])
         assert rc == 0
         wb = openpyxl.load_workbook(saida)
-        assert wb.sheetnames == ["LEIA-ME", "Materiais", "Secoes", "Regioes", "Vertices", "NA", "Cargas", "Previas", "Origem"]
+        assert wb.sheetnames == ["LEIA-ME", "Materiais", "Secoes", "Regioes", "Vertices", "NA", "Cargas", "Grelha", "Previas", "Origem"]
         assert wb["Regioes"].max_row == 3
         cab = [c.value for c in wb["Secoes"][1]]
         assert "Cota real do ponto mais alto (m, opcional)" in cab and cab.index("Avisos") == 11

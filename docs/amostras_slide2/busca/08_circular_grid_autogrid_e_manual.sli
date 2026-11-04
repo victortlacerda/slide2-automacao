@@ -1,0 +1,484 @@
+
+model description:
+  version: 6.020
+  methods: 6
+  units: metric
+  seismic: 0
+  seismicv: 0
+  water: hu
+  direction: left to right
+  tolerance: 0.005
+  maxiter: 50
+  malpha: 1
+  tensile check: 0
+  tensile percentage: 95
+  corpeng_check: 0
+  corpeng_val: 0
+  apply_support_to_interslice: 0
+  correctradius: 0
+  correctnormal: 0
+  check_min_lambda: 0
+  check_max_lambda: 0
+  min_lambda: -0.1
+  max_lambda: 6
+  check_discard_below_fs: 0
+  check_discard_above_fs: 0
+  discard_below_fs_val: 0.1
+  discard_above_fs_val: 3
+  init_trial_fs: 1
+  max_change_fs: 0.5
+  min_fs_iter: 0.1
+  check_min_fs_iter: 0
+  check_max_change_fs: 0
+  check_min_slice_weight: 0
+  check_min_slice_width: 0
+  check_max_base_angle: 0
+  min_slice_weight: 0.001
+  min_slice_width: 0.001
+  max_base_angle: 80
+  steffensen: 1
+  gammaw: 9.81
+  maxnegporepressure: 0
+  usemaxnegporepressure: 0
+  mode: 0
+  search: 4
+  circularsearch: 0
+  datamode: 1
+  nummaterials: 20
+  numanchors: 20
+  discretized: 0
+  fea mesh exists: 0
+  probability_analysis: 0
+  sensitivity analysis: no
+  random_type: 0
+  random_method: 0
+  with_ru: 1
+  seismic_stage2: 0
+  transient: no
+  design_selection: 0
+  singlesource: 1
+  advanced_options: no
+  advanced_options_type: 0
+  advanced_options_rdd_method: 0
+  time_units: days
+  permeability_units_imperial: feet/second
+  permeability_units_metric: meters/second
+  use_date_for_stages: 0
+  stage_names: 0
+
+
+material types:
+  soil1 = type: 0 water: 1 wtable: 1 c: 10 phi: 28 uw: 18 hutype: 0 withru: 0
+  soil2 = type: 0 water: 1 wtable: 1 c: 15 phi: 25 uw: 20 hutype: 0 withru: 0
+  soil3 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil4 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil5 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil6 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil7 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil8 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil9 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil10 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil11 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil12 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil13 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil14 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil15 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil16 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil17 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil18 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil19 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+  soil20 = type: 0 water: 1 wtable: 1 c: 1 phi: 35 uw: 20 hutype: 0 withru: 0
+
+design standard array:
+6
+  name: None 
+  standard: 0
+  1 0 1.35 1.5 1 1
+  1 1 1 1 1
+  1 1.1 1.1 1.1 1.1 1
+  name: Eurocode 7 - Design Approach 1, Combination 1 
+  standard: 1
+  1 0 1.35 1.5 1 1
+  1 1 1 1 1
+  1 1.1 1.1 1.1 1.1 1
+  name: Eurocode 7 - Design Approach 1, Combination 2 
+  standard: 2
+  1 0 1 1.3 1 1
+  1.25 1.25 1.4 1 1.25
+  1 1.1 1.1 1.1 1.1 1
+  name: Eurocode 7 - Design Approach 2 
+  standard: 3
+  1 0 1.35 1.5 1 1
+  1 1 1 1 1
+  1.1 1.1 1.1 1.1 1.1 1
+  name: Eurocode 7 - Design Approach 3 
+  standard: 4
+  1 0 1 1.3 1 1
+  1.25 1.25 1.4 1 1.25
+  1 1 1 1 1 1
+  name: BS 8006:1995 Section 7 - Reinforced Slopes 
+  standard: 5
+  1 1 1.2 1.3 1.5 1
+  1.6 1 1 1 1
+  1.25 1.5 1.5 1.5 1.3 1
+
+probability settings:
+  sampling_method: 0
+  number_of_samples: 1000
+  analysis_type: 0
+
+strength functions:
+
+start discrete strength fns:
+  num: 0
+
+end discrete strength fns:
+
+modified snowden strength functions:
+  numfunctions: 0
+
+user defined support:
+
+user defined water method:
+
+user defined bc:
+
+anchor types:
+  anchor1 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor2 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor3 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor4 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor5 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor6 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor7 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor8 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor9 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor10 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor11 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor12 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor13 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor14 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor15 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor16 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor17 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor18 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor19 = type: 1 fa: 0 sp: 1 cap: 100
+  anchor20 = type: 1 fa: 0 sp: 1 cap: 100
+
+tension crack properties:
+  type: filled
+
+vertices:
+  1 x: 0  y: -15
+  2 x: 43  y: -15
+  3 x: 43  y: -6
+  4 x: 23  y: -6
+  5 x: 20  y: 0
+  6 x: 0  y: 0
+  7 x: 2.77555756156289e-017  y: -6
+  8 x: 3.729  y: -7.909
+  9 x: 7.745  y: -9.899
+  10 x: 12.828  y: -9.899
+  11 x: 16.382  y: -9.899
+  12 x: 21.003  y: -9.899
+  13 x: 24.521  y: -9.366
+  14 x: 26.938  y: -8.406
+  15 x: 29.746  y: -7.624
+  16 x: 32.554  y: -6.629
+  17 x: 37.494  y: -6.629
+
+cells:
+  1  vertices: [1,2,4] material: soil1
+  2  vertices: [3,4,2] material: soil1
+  3  vertices: [5,6,7] material: soil2
+  4  vertices: [5,7,4] material: soil2
+  5  vertices: [1,4,7] material: soil1
+
+anchors:
+
+back analysis of support:
+  compute: no
+  fs: 2
+  load elevation: 0
+
+water table:
+  vertices: [7,8,9,10,11,12,13,14,15,16,17,3]
+
+drawdown line:
+
+piezos:
+
+tension crack:
+
+pore pressures:
+
+slope:
+  1  vertices: [6,5,4,3]
+
+exterior:
+  1  vertices: [1,2,3,4,5,6,7]
+
+forces:
+  1 type: 0 x1: 0 y1: 0 x2: 20 y2: 0 angle: 270 load: 100 load2: 100 stage2: 0 design_standard_option: 0
+  2 type: 1 x1: 20 y1: 0 angle: 270 load: 200 stage2: 0 design_standard_option: 0
+  3 type: 1 x1: 28.1466919383044 y1: -6 angle: 330 load: 100 stage2: 0 design_standard_option: 0
+
+dist load group:
+  num: 1
+  begin: 0   end: 0
+  orient: 4   angle: 0   flip: 0
+  type: 0   params: 1
+    100
+
+stats params loads:
+  num_loads: 3
+  begin: 0   end: 0   num: 1
+    2 0 0 0  is_on: 0
+  begin: 1   end: 1   num: 1
+    2 0 0 0  is_on: 0
+  begin: 2   end: 2   num: 1
+    2 0 0 0  is_on: 0
+
+noncircular analysis:
+  slices: 25
+
+circular analysis:
+  slices: 25
+
+search focus:
+
+slope limits:
+  x1: 0 y1: 0 x2: 43 y2: -6
+
+grids:
+  1: x1: 22.4541491543866 y1: -0.235917798684918  x2: 29.870745771933 y2: 7.18067881886146  nx: 20 ny: 20
+  2: x1: 5 y1: 2  x2: 30 y2: 20  nx: 15 ny: 12
+
+centers:
+
+surfaces:
+
+grid search:
+  rinc: 10
+  composite: 0
+  reverse_curvature: 1
+
+block search:
+  samples: 5000
+  leftstart: 135
+  leftend: 135
+  rightstart: 45
+  rightend: 45
+  random: 1
+  convex: 0
+  optimize: 0
+  multiple_groups: 0
+
+path search:
+  samples: 5000
+  random: 1
+  convex: 0
+  optimize: 0
+
+threepoint search:
+  composite: 0
+  reverse_curvature: 1
+  samples: 5000
+  random: 1
+  weightlower: 1
+
+maxcoverage search:
+  divisionsalong: 10
+  circlesperdiv: 10
+  iterations: 10
+  percentkept: 50
+  composite: 0
+
+simulatedannealing search:
+  nvertices: 8
+  ngen: 1000
+  nepsilon: 5
+  ftol: 0.0001
+  c: 8
+  convex: 1
+  optimize: 1
+
+autoslope search:
+  divisionsalong: 10
+  circlesperdiv: 10
+  iterations: 10
+  percentkept: 50
+  numvertices: 12
+  optimize: 1
+
+cuckoo search:
+  nvertices: 8
+  nsurf: 1000
+  horizontal: 0
+  optimize: 1
+
+optimize surfaces:
+  min_delta_fos: 1e-009
+  step_reduction_factor: 0.5
+  max_iterations: 4000
+  convex_surfaces_only: 0
+  which_surface: 0
+  less_than_fs: 1.5
+  snap_distance: 0.01
+  snap_distance_auto: 1
+  do_snap: 1
+  use_checks: 1
+  max_concave_angle: 5
+  use_max_concave_angle: 1
+  total_concave_angle: 5
+  use_total_concave_angle: 1
+
+gwmesh setup:
+1500 0
+0 0 0.1
+
+gwmesh auto refine mesh:
+1
+
+disc regions:
+  0
+
+new density regions:
+  0
+
+fea analysis:
+ maxiter: 500 tolerance: 1e-006 history: 1 fea_timesteps: 0 fea_maxitertransient: 500 fea_tolerancetransient: 1e-006 fea_scaletol: 1 fea_scaletoltran: 1
+ suction: 0
+
+discharge sections start:
+  num discharge sections: 0
+discharge sections end:
+
+
+material random vars:
+  num: 0
+
+materials mc correlation:
+  1,  0,  -0.5
+  2,  0,  -0.5
+  3,  0,  -0.5
+  4,  0,  -0.5
+  5,  0,  -0.5
+  6,  0,  -0.5
+  7,  0,  -0.5
+  8,  0,  -0.5
+  9,  0,  -0.5
+  10,  0,  -0.5
+  11,  0,  -0.5
+  12,  0,  -0.5
+  13,  0,  -0.5
+  14,  0,  -0.5
+  15,  0,  -0.5
+  16,  0,  -0.5
+  17,  0,  -0.5
+  18,  0,  -0.5
+  19,  0,  -0.5
+  20,  0,  -0.5
+
+support random vars:
+  num: 0
+
+seismic random var:
+    2, 0, 0, 0, is_on: 0
+    2, 0, 0, 0, is_on: 0
+    0, 0.5
+
+water table stats:
+    2, 0.5, 0
+    determ wt usage: Mean
+
+drawdown line stats:
+    2, 0.5, 0
+    determ rd usage: Mean
+
+stats params tension crack:
+  2, 0.5, 0
+  2, 0, 0, 0, is_on: 0
+    determ tc usage: Mean
+
+stats params piezos:
+
+interface:
+
+material gen. hoek-brown:
+  num: 1  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 2  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 3  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 4  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 5  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 6  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 7  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 8  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 9  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 10  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 11  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 12  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 13  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 14  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 15  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 16  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 17  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 18  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 19  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+  num: 20  gsi: 50  mi: 10  disturbance: 0  use_as_random: 0
+
+material properties:
+  Material 1    red: 255  green: 255  blue: 193 hatch: 2147483647
+  Material 2    red: 188  green: 222  blue: 187 hatch: 2147483647
+  Material 3    red: 255  green: 206  blue: 157 hatch: 2147483647
+  Material 4    red: 255  green: 200  blue: 55 hatch: 2147483647
+  Material 5    red: 255  green: 200  blue: 200 hatch: 2147483647
+  Material 6    red: 150  green: 255  blue: 200 hatch: 2147483647
+  Material 7    red: 255  green: 50  blue: 150 hatch: 2147483647
+  Material 8    red: 50  green: 200  blue: 200 hatch: 2147483647
+  Material 9    red: 255  green: 200  blue: 255 hatch: 2147483647
+  Material 10    red: 255  green: 255  blue: 155 hatch: 2147483647
+  Material 11    red: 215  green: 118  blue: 104 hatch: 2147483647
+  Material 12    red: 190  green: 192  blue: 211 hatch: 2147483647
+  Material 13    red: 192  green: 192  blue: 192 hatch: 2147483647
+  Material 14    red: 176  green: 204  blue: 190 hatch: 2147483647
+  Material 15    red: 212  green: 255  blue: 255 hatch: 2147483647
+  Material 16    red: 183  green: 219  blue: 219 hatch: 2147483647
+  Material 17    red: 197  green: 197  blue: 137 hatch: 2147483647
+  Material 18    red: 255  green: 132  blue: 90 hatch: 2147483647
+  Material 19    red: 153  green: 211  blue: 133 hatch: 2147483647
+  Material 20    red: 203  green: 150  blue: 20 hatch: 2147483647
+  Support 1    red: 0  green: 0  blue: 255
+  Support 2    red: 0  green: 128  blue: 0
+  Support 3    red: 128  green: 128  blue: 128
+  Support 4    red: 255  green: 0  blue: 255
+  Support 5    red: 255  green: 0  blue: 0
+  Support 6    red: 0  green: 255  blue: 0
+  Support 7    red: 56  green: 144  blue: 144
+  Support 8    red: 255  green: 255  blue: 0
+  Support 9    red: 255  green: 192  blue: 200
+  Support 10    red: 0  green: 255  blue: 255
+  Support 11    red: 0  green: 0  blue: 0
+  Support 12    red: 128  green: 128  blue: 192
+  Support 13    red: 128  green: 128  blue: 0
+  Support 14    red: 128  green: 0  blue: 0
+  Support 15    red: 152  green: 248  blue: 152
+  Support 16    red: 0  green: 0  blue: 128
+  Support 17    red: 200  green: 200  blue: 200
+  Support 18    red: 128  green: 0  blue: 128
+  Support 19    red: 0  green: 128  blue: 128
+  Support 20    red: 255  green: 128  blue: 0
+
+geometry info:
+#0:External boundary  1:Excavation  2:Joint  3:Material  4:Stage
+#  Material Type    End Flag        Vertex (x,y)        Disc (x,y)       A.B.I    Visible
+# ----------------------------------------------------------------------------------------------
+         0                0        0.000000000000000,-15.0000000000000           0              0          1
+         0                0        43.0000000000000,-15.0000000000000           0              0          1
+         0                0        43.0000000000000,-6.00000000000000           0              0          1
+         0                0        23.0000000000000,-6.00000000000000           0              0          1
+         0                0        20.0000000000000,0.000000000000000           0              0          1
+         0                0        0.000000000000000,0.000000000000000           0              0          1
+         0                1        2.77555756156289e-017,-6.00000000000000           0              0          1
+         3                0        2.77555756156289e-017,-6.00000000000000           0              0          1
+         3                1        23.0000000000000,-6.00000000000000           0              0          1

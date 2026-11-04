@@ -40,7 +40,7 @@ try:
 except ImportError as exc:  # pragma: no cover
     sys.exit(f"Falta a biblioteca '{exc.name}'. Instale com:\n  pip install shapely openpyxl matplotlib")
 
-VERSAO = "0.2"
+VERSAO = "0.4"
 EPS = 1e-6
 MAX_MATERIAIS = 20
 RAIZ = Path(__file__).resolve().parents[2]
@@ -60,6 +60,13 @@ METODOS = [
     ("spencer", "Spencer", 8),
 ]
 DIRECOES = {"dir-esq": "right to left", "esq-dir": "left to right"}
+# Busca da superfície: (chave, nome na janela Surface Options, código no .sli). Ver docs/formato_sli.md.
+BUSCAS = {
+    "circular": [("grid", "Grid Search (grelha de centros)", 0), ("slope", "Slope Search", 1),
+                 ("autorefine", "Auto Refine Search", 2)],
+    "nao_circular": [("block", "Block Search", 0), ("path", "Path Search", 1),
+                     ("annealing", "Simulated Annealing", 3), ("autorefine", "Auto Refine Search", 4)],
+}
 
 
 class ErroSecao(ValueError):
@@ -195,7 +202,7 @@ def ler_planilha(caminho):
         n = int(row[i_sec])
         secoes[n] = {"n": n, "nome": str(row[i_nome] or f"Secao_{n:02d}"),
                      "ativa": str(row[i_ativa] or "s").strip().lower() != "n",
-                     "cota_max": row[i_cmax], "cota_real": None, "regioes": {}, "na": [], "cargas": []}
+                     "cota_max": row[i_cmax], "cota_real": None, "regioes": {}, "na": [], "cargas": [], "grelha": None}
         if i_creal is not None and row[i_creal] not in (None, ""):
             secoes[n]["cota_real"] = _num(row[i_creal], "cota real")
 
@@ -254,6 +261,23 @@ def ler_planilha(caminho):
                 raise ValueError(f"Aba Cargas, linha {r}: {exc}") from exc
             if n in secoes:
                 secoes[n]["cargas"].append(carga)
+
+    if "Grelha" in wb.sheetnames:
+        ws = wb["Grelha"]
+        cab = _colunas(ws)
+        idx = [_idx(cab, c) for c in ("Seção", "X1", "Y1", "X2", "Y2", "nx", "ny")]
+        for r, row in enumerate(ws.iter_rows(min_row=2, values_only=True), 2):
+            if row[idx[0]] is None or all(row[i] in (None, "") for i in idx[1:5]):
+                continue
+            n = int(row[idx[0]])
+            try:
+                x1, y1, x2, y2 = (_num(row[i], c) for i, c in zip(idx[1:5], ("X1", "Y1", "X2", "Y2")))
+                nx = int(_num(row[idx[5]], "nx", False) or 20)
+                ny = int(_num(row[idx[6]], "ny", False) or 20)
+            except ValueError as exc:
+                raise ValueError(f"Aba Grelha, linha {r}: {exc}") from exc
+            if n in secoes:
+                secoes[n]["grelha"] = (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2), nx, ny)
 
     for sec in secoes.values():
         for k, reg in sec["regioes"].items():
@@ -488,6 +512,26 @@ def montar_secao(sec, materiais, direcao):
     }
 
 
+def grelha_do_script(terreno, direcao="right to left"):
+    """Grelha automática com REGRA PRÓPRIA (não é o AutoGrid do Slide2, cuja regra não é documentada).
+
+    H = desnível do terreno; face = trechos com inclinação maior que 10 %.
+    Centros em X: da face 1,5 H para o lado do pé (para onde a massa escorrega, segundo a direção
+    escolhida pelo usuário) até 0,5 H para o lado da crista. Em Y: do topo até topo + 2 H. 20 x 20.
+    O módulo 04 avisa se o mínimo cair na borda da grelha.
+    (v0.3 usava ±0,5 H e topo + 0,25 H a 1,5 H: no teste no Slide os 4 mínimos caíram na borda.)
+    """
+    ys = [y for _, y in terreno]
+    H = max(max(ys) - min(ys), 1.0)
+    face = [p for a, b in zip(terreno, terreno[1:]) if b[0] - a[0] > EPS and abs((b[1] - a[1]) / (b[0] - a[0])) > 0.1
+            for p in (a, b)] or terreno
+    x0, x1 = min(p[0] for p in face), max(p[0] for p in face)
+    topo = max(ys)
+    if direcao == "left to right":   # pé à direita
+        return (x0 - 0.5 * H, topo, x1 + 1.5 * H, topo + 2.0 * H, 20, 20)
+    return (x0 - 1.5 * H, topo, x1 + 0.5 * H, topo + 2.0 * H, 20, 20)
+
+
 def y_no_terreno(terreno, x):
     for (x0, y0), (x1, y1) in zip(terreno, terreno[1:]):
         if x0 - EPS <= x <= x1 + EPS and x1 - x0 > EPS:
@@ -555,8 +599,20 @@ def trocar_secao(texto, nome, novo, proxima):
     return saida
 
 
-def gerar_sli(base, geo, materiais, metodos):
+def gerar_sli(base, geo, materiais, metodos, busca=None):
     t = base
+    if busca:
+        codigo = dict((k, c) for k, _, c in BUSCAS[busca["tipo"]])[busca["metodo"]]
+        campos = {"mode": 0 if busca["tipo"] == "circular" else 1}
+        campos["circularsearch" if busca["tipo"] == "circular" else "search"] = codigo
+        for chave, valor in campos.items():
+            t, n = re.subn(rf"(?m)^(\s*{chave}:).*$", lambda m, v=valor: f"{m.group(1)} {v}", t, count=1)
+            if n != 1:
+                raise ValueError(f"Modelo-base sem '{chave}'.")
+        g = geo.get("grelha")
+        t = trocar_secao(t, "grids", "grids:\n" + (
+            f"  1: x1: {fmt(g[0])} y1: {fmt(g[1])}  x2: {fmt(g[2])} y2: {fmt(g[3])}  nx: {g[4]} ny: {g[5]}" if g else ""),
+            "centers")
     # parâmetros globais
     t, n = re.subn(r"(?m)^(\s*direction:).*$", lambda m: f"{m.group(1)} {geo['direcao']}", t, count=1)
     mask = sum(v for k, _, v in METODOS if k in metodos)
@@ -693,6 +749,11 @@ def desenhar_previa(sec, geo, materiais, caminho):
         ax.text(c.x, c.y, f"{r['material']}\nsoil{m['slot']}", ha="center", va="center", fontsize=8)
     xs, ys = zip(*geo["terreno_pts"])
     ax.plot(xs, ys, color="0.15", lw=2)
+    if geo.get("grelha"):
+        from matplotlib.patches import Rectangle
+        g = geo["grelha"]
+        ax.add_patch(Rectangle((g[0], g[1]), g[2] - g[0], g[3] - g[1], fill=False, ec="#6A1B9A", lw=1, ls="--"))
+        ax.text(g[0], g[3], f" grelha {g[4]}x{g[5]}", color="#6A1B9A", fontsize=8, va="bottom")
     if geo["na_pts"]:
         xs, ys = zip(*geo["na_pts"])
         ax.plot(xs, ys, color="#1565C0", lw=1.6)
@@ -742,6 +803,9 @@ def main(argv=None) -> int:
     ap.add_argument("--saida", type=Path, help="Pasta dos modelos (padrão: <planilha>_modelos, nunca sobrescreve)")
     ap.add_argument("--config", type=Path, help=".json de uma rodada anterior")
     ap.add_argument("--direcao", choices=list(DIRECOES), help="Mesma direção para todas as seções")
+    ap.add_argument("--superficie", choices=list(BUSCAS), help="Tipo de superfície")
+    ap.add_argument("--busca", help="Busca: grid, slope, autorefine (circular); block, path, annealing, autorefine (não circular)")
+    ap.add_argument("--grelha", choices=["planilha", "auto"], help="Grid Search: grelha da aba Grelha ou automática do script")
     ap.add_argument("--metodos", help="Métodos: números 1-9 ou nomes (" + ", ".join(m[0] for m in METODOS) + ")")
     args = ap.parse_args(argv)
     cfg = json.loads(args.config.read_text(encoding="utf-8")) if args.config else {}
@@ -806,6 +870,34 @@ def main(argv=None) -> int:
             metodos = perguntar("Quais métodos? (números separados por vírgula, ex.: 1,9 = Bishop e Spencer)", None, ler_metodos,
                                 msg_erro="Use números de 1 a 9 separados por vírgula.")
 
+        # --- busca da superfície: sempre decisão do usuário ---
+        busca = dict(cfg.get("busca") or {})
+        if args.superficie:
+            busca["tipo"] = args.superficie
+        if args.busca:
+            busca["metodo"] = args.busca
+        if args.grelha:
+            busca["grelha"] = args.grelha
+        if "tipo" not in busca:
+            busca["tipo"] = perguntar("\nTipo de superfície: 1 = circular, 2 = não circular", None,
+                                      lambda t: {"1": "circular", "2": "nao_circular"}[t], msg_erro="Digite 1 ou 2.")
+        opcoes = BUSCAS[busca["tipo"]]
+        if busca.get("metodo") not in {k for k, _, _ in opcoes}:
+            if "metodo" in busca:
+                raise ValueError(f"Busca '{busca['metodo']}' não existe para superfície {busca['tipo']}.")
+            print("Método de busca:")
+            for k, (_, nome, _) in enumerate(opcoes, 1):
+                print(f"  {k}) {nome}")
+            busca["metodo"] = perguntar("Qual?", None, lambda t: opcoes[int(t) - 1][0],
+                                        msg_erro=f"Digite um número de 1 a {len(opcoes)}.")
+        if busca["tipo"] == "circular" and busca["metodo"] == "grid" and busca.get("grelha") not in ("planilha", "auto"):
+            busca["grelha"] = perguntar("Grelha: 1 = da aba Grelha (coordenadas por seção), 2 = automática "
+                                        "(regra do script, não o AutoGrid do Slide)", None,
+                                        lambda t: {"1": "planilha", "2": "auto"}[t], msg_erro="Digite 1 ou 2.")
+        if busca["metodo"] == "block":
+            print("  Aviso: Block Search precisa de janelas/linhas de busca, que o script ainda não grava; "
+                  "defina-as no Slide2 antes de calcular.")
+
         gsat = [m["nome"] for m in materiais.values() if m["gsat"] is not None]
         destino = pasta_livre((args.saida or planilha.with_name(planilha.stem + "_modelos")).expanduser().resolve())
         destino.mkdir(parents=True)
@@ -814,7 +906,15 @@ def main(argv=None) -> int:
         for s in ativas:
             try:
                 geo = montar_secao(s, materiais, DIRECOES[direcoes[s["n"]]])
-                sli = gerar_sli(base_txt, geo, materiais, metodos)
+                geo["grelha"] = None
+                if busca["tipo"] == "circular" and busca["metodo"] == "grid":
+                    if busca["grelha"] == "planilha":
+                        if not s["grelha"]:
+                            raise ErroSecao("Grid Search com grelha da planilha, mas a seção não tem linha na aba Grelha")
+                        geo["grelha"] = s["grelha"]
+                    else:
+                        geo["grelha"] = grelha_do_script(geo["terreno_pts"], geo["direcao"])
+                sli = gerar_sli(base_txt, geo, materiais, metodos, busca)
                 arq = destino / f"{s['nome']}.slim"
                 gravar_slim(base, arq, sli)
                 desenhar_previa(s, geo, materiais, destino / f"{s['nome']}.png")
@@ -830,10 +930,10 @@ def main(argv=None) -> int:
         config = {"versao_script": VERSAO, "data": datetime.now().isoformat(timespec="seconds"),
                   "planilha": str(planilha), "modelo_base": str(base),
                   "direcoes": {str(k): v for k, v in direcoes.items()}, "metodos": metodos,
-                  "resultado": resultado}
+                  "busca": busca, "resultado": resultado}
         (destino / "respostas.json").write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"Respostas gravadas em {destino / 'respostas.json'} (reuse com --config).")
-        print("Antes de calcular: abra cada modelo no Slide2, confira a geometria e defina a busca da superfície.")
+        print("Antes de calcular: abra os modelos no Slide2 e confira a geometria. Para calcular em lote, use o módulo 04.")
         return 0 if all("erro" not in r for r in resultado) else 1
     except (RuntimeError, ValueError, OSError, zipfile.BadZipFile) as exc:
         print(f"Erro: {exc}", file=sys.stderr)

@@ -3,7 +3,7 @@
 ## Fase 1: modelo básico (concluída)
 - [x] Gerar `.slim` com boundary e um material a partir de um molde (módulo 01).
 
-## Fase 2: CAD para planilha (concluída, v0.5)
+## Fase 2: CAD para planilha (concluída, v0.6)
 - [x] Ler DXF, delimitar seções por janela, fechar regiões, gerar planilha e prévias (módulo 02).
 - [x] Modo auto mostrando as janelas sugeridas no desenho antes de aceitar.
 - [x] Modo auto: lentes ficam na seção envolvente; numeração em ordem de leitura da prancha.
@@ -11,7 +11,7 @@
 - [ ] Testar com DXF real com camadas de solo desenhadas.
 - [x] Confirmar a tela de seleção (modo `janela`) no computador do usuário.
 
-## Fase 3: planilha para `.slim` (módulo 03, v0.1 concluída)
+## Fase 3: planilha para `.slim` (concluída)
 Precisa das amostras do Slide2, cada uma salva a partir do `vazio.slim` com **uma única mudança**
 (anotar os valores digitados):
 - [x] Duas camadas: fronteira interna + 2 materiais com valores diferentes (amostra a01).
@@ -27,28 +27,29 @@ Entregas:
 - [x] NA (CAD ou planilha) e cargas (planilha).
 - [x] Perguntas no terminal: direção por seção e métodos; respostas em JSON.
 - [x] Abrir os modelos gerados no Slide2 do usuário e conferir (camadas, lente, NA, cargas, métodos, direção).
-- [ ] Tipo de superfície e busca: na fase 4, com as amostras da #9.
+- [x] Tipo de superfície e busca (v0.3, fase 4).
 
-## Fase 4: busca da superfície e cálculo
-- [ ] Amostra com grelha circular manual (anotar limites e nº de centros) e limites de entrada/saída.
-- [ ] Amostra com Auto Refine.
-- [ ] Amostra com AutoGrid (ver se o arquivo guarda marcador ou coordenadas).
-- [ ] Tipo de superfície não circular a usar (Path Search, Block, Auto Slope...).
-- [ ] Modelo salvo depois do Compute.
-- [ ] Caminho do `aslidew.exe`, versão do Slide2 e resultado de `aslidew.exe "modelo.slim"`.
-- [ ] Rodar o cálculo em lote e ler o FS de cada seção para uma tabela.
+## Fase 4: busca da superfície e cálculo (concluída)
+- [x] Amostras de busca salvas no Slide: grelha, Slope, Auto Refine, AutoGrid, Block, Path, Annealing (`docs/amostras_slide2/busca`).
+- [x] AutoGrid grava só coordenadas, sem marcador: não é imitado; grelha automática com regra própria.
+- [x] Modelo salvo depois do Compute: formato do `.s01` (`docs/amostras_slide2/resultados`).
+- [x] `aslidew.exe "modelo.slim"` calcula pela linha de comando (código de saída 2 mesmo dando certo).
+- [x] Cálculo em lote e tabela de FS por seção e método (módulo 04), testado no Slide 6.0.
 - [ ] Caso de validação: exemplo do guia da aula (FS ≈ 1,287 Bishop; 1,407 talude 1:1; 1,305 com 20 kPa).
 
 ## Fase 5: cenários e verificações
-- [ ] Nível d'água e sobrecarga (amostras do Slide2).
-- [ ] Checagens automáticas: mínimo na borda da grelha, superfície tocando o contorno, mesmo método entre cenários.
-- [ ] FS-alvo por seção/cenário e relatório (tabela + figuras).
+- [x] Nível d'água e sobrecarga (módulo 03).
+- [ ] Cenários: a mesma seção com NA/cargas diferentes, num único lote.
+- [x] Checagens: mínimo na borda da grelha, superfície no limite de busca ou no fundo (módulo 04).
+- [ ] Checagem: mesmo método entre cenários.
+- [x] FS-alvo opcional e relatório (tabela + figuras), módulo 04.
+- [ ] FS-alvo por seção/cenário.
 
 ## Ideias futuras
 - Solo grampeado: inserir grampos e otimizar comprimentos (Crisp & Davies, 2022).
 - Retroanálise de parâmetros (FS = 1), sensibilidade e análise probabilística.
 - Memorial de cálculo automático.
 
-## Decisões em aberto
-- O que ler dos resultados: só o FS mínimo por método, ou também a superfície crítica?
-- FS-alvo: por seção, por cenário, ou só reportar?
+## Decisões tomadas
+- Resultados: FS mínimo por método **e** superfície crítica (centro, raio, entrada, saída, fatias).
+- FS-alvo: opcional (`--fs-alvo`); sem ele, só reporta.
