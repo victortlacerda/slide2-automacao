@@ -1,6 +1,21 @@
 # Registro de mudanças
 
+## Módulo 03: planilha_para_slim
+
+### v0.1
+- Um `.slim` por seção ativa a partir da planilha do módulo 02 e do molde `vazio.slim`.
+- Várias camadas (células triangulares por região), interfaces de material, contorno, terreno e
+  limites de busca montados automaticamente.
+- NA da aba NA, recortado no contorno; cargas distribuídas verticais e em linha com ângulo.
+- Direção da ruptura e métodos perguntados no terminal (ordem da janela do Slide2), gravados em JSON.
+- Cota real opcional por seção; cor do material; prévia PNG de cada modelo.
+- Validado reconstruindo a amostra a02 do Slide2 bloco a bloco.
+
 ## Módulo 02: cad_para_planilha
+
+### v0.5
+- Pergunta a camada CAD do nível d'água e grava os pontos de cada seção na nova aba NA (origem CAD).
+- Nova aba Cargas, preenchida pelo usuário (lista suspensa distribuida/linha).
 
 ### v0.4
 - Aba Secoes: coluna opcional "Cota real do ponto mais alto" para seções que não estão na cota

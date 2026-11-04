@@ -51,8 +51,8 @@ cada região ganha seu material por lista suspensa. As prévias numeradas també
 | Pasta | O que faz | Situação |
 |---|---|---|
 | [`01_modelo_basico`](modulos/01_modelo_basico) | Cria um `.slim` com contorno externo e um material a partir de um modelo-base | Funciona; primeiro teste |
-| [`02_cad_para_planilha`](modulos/02_cad_para_planilha) | DXF → seções → regiões → planilha-padrão com prévias | **v0.3**, testado |
-| [`03_planilha_para_slim`](modulos/03_planilha_para_slim) | Planilha → um `.slim` por seção, várias camadas, opções de análise no terminal | Em especificação |
+| [`02_cad_para_planilha`](modulos/02_cad_para_planilha) | DXF → seções → regiões → planilha-padrão com prévias, NA do CAD | **v0.5**, testado |
+| [`03_planilha_para_slim`](modulos/03_planilha_para_slim) | Planilha → um `.slim` por seção: camadas, NA, cargas, direção e métodos | **v0.1**, validado contra amostra do Slide2 |
 | Cálculo em lote | Rodar o Slide2 e tabelar o FS de cada seção | Planejado |
 
 Próximos passos em [`docs/roadmap.md`](docs/roadmap.md); formato do arquivo do Slide2 em
@@ -76,6 +76,9 @@ python modulos/02_cad_para_planilha/cad_para_planilha.py
 
 # Repetir uma rodada sem perguntas
 python modulos/02_cad_para_planilha/cad_para_planilha.py --config desenho_secoes.json
+
+# Planilha -> um .slim por seção (pergunta direção e métodos no terminal)
+python modulos/03_planilha_para_slim/planilha_para_slim.py
 
 # Modelo básico com boundary e um material
 python modulos/01_modelo_basico/slide2_editar_modelo.py

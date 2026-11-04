@@ -113,3 +113,12 @@ Nenhuma outra linha muda entre as amostras.
 
 - **NA:** do CAD (camada própria) **ou** da planilha.
 - **Cargas:** só da planilha.
+
+## Hipóteses usadas pelo módulo 03 (confirmar abrindo no Slide2)
+
+- Carga distribuída que atravessa quebras do terreno: um trecho por segmento em `forces`, todos
+  num único `dist load group` (`begin` = primeiro, `end` = último, índices a partir de 0), e uma
+  entrada por trecho em `stats params loads`.
+- Lente (camada inteiramente dentro de outra): interface de material fechada em `geometry info`
+  (tipo 3), repetindo o primeiro vértice no fim.
+- Pontos do NA que caem no meio de uma aresta do contorno são inseridos como vértices nessa aresta.

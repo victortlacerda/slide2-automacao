@@ -3,7 +3,7 @@
 ## Fase 1: modelo básico (concluída)
 - [x] Gerar `.slim` com boundary e um material a partir de um molde (módulo 01).
 
-## Fase 2: CAD para planilha (concluída, v0.4)
+## Fase 2: CAD para planilha (concluída, v0.5)
 - [x] Ler DXF, delimitar seções por janela, fechar regiões, gerar planilha e prévias (módulo 02).
 - [x] Modo auto mostrando as janelas sugeridas no desenho antes de aceitar.
 - [x] Modo auto: lentes ficam na seção envolvente; numeração em ordem de leitura da prancha.
@@ -11,7 +11,7 @@
 - [ ] Testar com DXF real com camadas de solo desenhadas.
 - [x] Confirmar a tela de seleção (modo `janela`) no computador do usuário.
 
-## Fase 3: planilha para `.slim` (módulo 03)
+## Fase 3: planilha para `.slim` (módulo 03, v0.1 concluída)
 Precisa das amostras do Slide2, cada uma salva a partir do `vazio.slim` com **uma única mudança**
 (anotar os valores digitados):
 - [x] Duas camadas: fronteira interna + 2 materiais com valores diferentes (amostra a01).
@@ -23,8 +23,11 @@ Precisa das amostras do Slide2, cada uma salva a partir do `vazio.slim` com **um
 - [x] Origem dos dados: NA do CAD ou da planilha; cargas só da planilha.
 
 Entregas:
-- [ ] Várias camadas por seção, materiais da planilha.
-- [ ] Perguntas no terminal: direção por seção, métodos, tipo de superfície, busca; respostas em JSON.
+- [x] Várias camadas por seção, materiais da planilha.
+- [x] NA (CAD ou planilha) e cargas (planilha).
+- [x] Perguntas no terminal: direção por seção e métodos; respostas em JSON.
+- [ ] Abrir os modelos gerados no Slide2 do usuário e conferir.
+- [ ] Tipo de superfície e busca: na fase 4, com as amostras da #9.
 
 ## Fase 4: busca da superfície e cálculo
 - [ ] Amostra com grelha circular manual (anotar limites e nº de centros) e limites de entrada/saída.
