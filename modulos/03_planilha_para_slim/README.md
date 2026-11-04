@@ -41,6 +41,9 @@ Saída: pasta `<planilha>_modelos/` com um `.slim` e uma prévia `.png` por seç
 
 ## Validação
 
+Os modelos gerados foram abertos no Slide 6.0: camadas, lente, NA, cargas (inclusive atravessando
+o talude), métodos e direção aparecem como na prévia.
+
 O teste `testes/test_planilha_para_slim.py` reconstrói a amostra **a02**, salva pelo próprio
 Slide2, a partir das mesmas entradas, e confere bloco a bloco: vértices (mesma numeração),
 contorno, terreno, NA, cargas, materiais, métodos, direção, limites de busca e interface.
@@ -50,6 +53,5 @@ contorno, terreno, NA, cargas, materiais, métodos, direção, limites de busca 
 - **Busca da superfície não é gravada** (grelha, Auto Refine, AutoGrid): defina no Slide2 antes de
   calcular. Entra na fase 4, com as amostras da issue #9.
 - **Carga distribuída só vertical e uniforme.** Quando atravessa uma quebra do terreno, vira trechos
-  agrupados num só `dist load group`: formato deduzido, confira no Slide2.
+  (o Slide mostra cada trecho com o seu rótulo).
 - **γ saturado** ainda não é gravado.
-- Lentes (camada dentro de outra) viram interface fechada: formato deduzido, confira no Slide2.

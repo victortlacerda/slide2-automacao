@@ -114,11 +114,18 @@ Nenhuma outra linha muda entre as amostras.
 - **NA:** do CAD (camada própria) **ou** da planilha.
 - **Cargas:** só da planilha.
 
-## Hipóteses usadas pelo módulo 03 (confirmar abrindo no Slide2)
+## Confirmado abrindo no Slide2 (módulo 03 v0.2)
 
 - Carga distribuída que atravessa quebras do terreno: um trecho por segmento em `forces`, todos
-  num único `dist load group` (`begin` = primeiro, `end` = último, índices a partir de 0), e uma
+  num único `dist load group` (o Slide mostra os trechos, cada um com o seu rótulo) (`begin` = primeiro, `end` = último, índices a partir de 0), e uma
   entrada por trecho em `stats params loads`.
 - Lente (camada inteiramente dentro de outra): interface de material fechada em `geometry info`
   (tipo 3), repetindo o primeiro vértice no fim.
 - Pontos do NA que caem no meio de uma aresta do contorno são inseridos como vértices nessa aresta.
+
+## Empacotamento do `.slim` (importante)
+
+O ZIP precisa ser gravado com **cabeçalhos novos**. Copiar os `ZipInfo` do molde (campos extra,
+flags) gera arquivos que o Slide 6.0 recusa com "Parâmetro incorreto". Com cabeçalhos novos,
+comprimidos ou não, o arquivo abre. O nome interno dos membros não precisa coincidir com o nome
+do arquivo (testado), mas os módulos 01 e 03 gravam iguais.

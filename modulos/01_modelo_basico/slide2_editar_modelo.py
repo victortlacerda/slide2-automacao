@@ -23,7 +23,7 @@ ficheiro resultante no Slide2 antes de o utilizar numa análise de engenharia.
 """
 from __future__ import annotations
 import argparse
-import copy
+
 import math
 import re
 import sys
@@ -324,13 +324,15 @@ def main() -> int:
         modified = update_sli(sli_text, points, cohesion, phi, gamma, args.material)
         members[idx] = (members[idx][0], modified.replace("\n", newline).encode("utf-8"))
         destination.parent.mkdir(parents=True, exist_ok=True)
-        with zipfile.ZipFile(destination, "w") as zout:
+        # Cabeçalhos ZIP novos: copiar os ZipInfo do molde gera arquivos que o Slide recusa
+        # ("Parâmetro incorreto").
+        with zipfile.ZipFile(destination, "w", zipfile.ZIP_DEFLATED) as zout:
             for info, data in members:
-                out_info = copy.copy(info)
                 inner_path = Path(info.filename)
+                name = info.filename
                 if inner_path.suffix.lower() in {".sli", ".slv", ".sltm"}:
-                    out_info.filename = str(inner_path.with_name(destination.stem + inner_path.suffix))
-                zout.writestr(out_info, data)
+                    name = str(inner_path.with_name(destination.stem + inner_path.suffix))
+                zout.writestr(name, data)
         with zipfile.ZipFile(destination, "r") as check:
             bad = check.testzip()
             if bad:

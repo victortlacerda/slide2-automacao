@@ -26,7 +26,7 @@ Entregas:
 - [x] Várias camadas por seção, materiais da planilha.
 - [x] NA (CAD ou planilha) e cargas (planilha).
 - [x] Perguntas no terminal: direção por seção e métodos; respostas em JSON.
-- [ ] Abrir os modelos gerados no Slide2 do usuário e conferir.
+- [x] Abrir os modelos gerados no Slide2 do usuário e conferir (camadas, lente, NA, cargas, métodos, direção).
 - [ ] Tipo de superfície e busca: na fase 4, com as amostras da #9.
 
 ## Fase 4: busca da superfície e cálculo

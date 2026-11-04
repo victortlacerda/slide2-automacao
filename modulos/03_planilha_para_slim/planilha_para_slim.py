@@ -22,7 +22,6 @@ O formato do .sli não é documentado pela Rocscience. Abra cada modelo no Slide
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import math
 import re
@@ -41,7 +40,7 @@ try:
 except ImportError as exc:  # pragma: no cover
     sys.exit(f"Falta a biblioteca '{exc.name}'. Instale com:\n  pip install shapely openpyxl matplotlib")
 
-VERSAO = "0.1"
+VERSAO = "0.2"
 EPS = 1e-6
 MAX_MATERIAIS = 20
 RAIZ = Path(__file__).resolve().parents[2]
@@ -663,13 +662,13 @@ def gravar_slim(base_slim, destino, sli_texto):
     nl = "\r\n" if b"\r\n" in original else "\n"
     membros[idx[0]] = (membros[idx[0]][0], sli_texto.replace("\n", nl).encode("utf-8"))
     destino.parent.mkdir(parents=True, exist_ok=True)
+    # Cabeçalhos ZIP NOVOS: copiar os ZipInfo do molde (campos extra, flags) gera arquivos que o
+    # Slide recusa com "Parâmetro incorreto" (testado no Slide 6.0).
     with zipfile.ZipFile(destino, "w", zipfile.ZIP_DEFLATED) as zout:
         for info, dados in membros:
-            novo = copy.copy(info)
             p = Path(info.filename)
-            if p.suffix.lower() in {".sli", ".slv", ".sltm"}:
-                novo.filename = destino.stem + p.suffix
-            zout.writestr(novo, dados)
+            nome = destino.stem + p.suffix if p.suffix.lower() in {".sli", ".slv", ".sltm"} else info.filename
+            zout.writestr(nome, dados)
 
 
 def desenhar_previa(sec, geo, materiais, caminho):

@@ -154,6 +154,11 @@ def test_fluxo_completo_cad_planilha_slim():
         t4 = ler_sli(saida / "Secao_04.slim")
         assert "soil2" in bloco(t4, "cells") and "soil3" in bloco(t4, "cells")   # lente de argila no silte
         assert (saida / "respostas.json").is_file() and (saida / "Secao_04.png").is_file()
+        # cabeçalhos ZIP novos (sem campos herdados do molde), senão o Slide recusa o arquivo
+        for m in modelos:
+            infos = zipfile.ZipFile(m).infolist()
+            assert [i.filename for i in infos] == [m.stem + s for s in (".sli", ".slv", ".sltm")]
+            assert all(i.extra == b"" for i in infos)
         # repetir pelo JSON, sem perguntas
         with redirect_stdout(io.StringIO()):
             assert p2s.main(["--config", str(saida / "respostas.json"), "--saida", str(d / "r")]) == 0

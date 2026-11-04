@@ -2,6 +2,12 @@
 
 ## Módulo 03: planilha_para_slim
 
+### v0.2
+- **Correção:** o `.slim` passa a ser gravado com cabeçalhos ZIP novos. Os herdados do molde faziam o
+  Slide recusar o arquivo ("Parâmetro incorreto").
+- Conferido no Slide 6.0 do usuário: camadas, lente, NA, cargas (inclusive atravessando o talude),
+  métodos e direção abrem como esperado.
+
 ### v0.1
 - Um `.slim` por seção ativa a partir da planilha do módulo 02 e do molde `vazio.slim`.
 - Várias camadas (células triangulares por região), interfaces de material, contorno, terreno e
@@ -43,6 +49,9 @@
   respostas gravadas em JSON (`--config`).
 
 ## Módulo 01: slide2_editar_modelo
+
+### v0.2
+- **Correção:** mesma correção do empacotamento ZIP do módulo 03.
 
 ### v0.1
 - Modelo `.slim` com contorno externo e um material a partir do molde `vazio.slim`.
