@@ -45,6 +45,37 @@ Entregas:
 - [x] FS-alvo opcional e relatório (tabela + figuras), módulo 04.
 - [ ] FS-alvo por seção/cenário.
 
+## Fase 6: extrair e exibir resultados (proposta, a decidir com o usuário)
+
+O `.s01` traz bem mais do que o FS mínimo. Já confirmado na amostra r01:
+todas as superfícies de cada centro da grelha com o FS de cada método; a superfície crítica em fatias;
+e 16 grandezas por fatia (resistência friccional e coesiva, força normal na base, ângulo de atrito da
+base, forças normal e cisalhante entre fatias, peso, poropressão, M-alfa, linha de empuxo, sismo,
+coesão e material da base).
+
+Extração (base para todos os gráficos):
+- [ ] Ler todas as superfícies e os dados por fatia do `.s01` (hoje o módulo 04 lê só o mínimo).
+- [ ] Gravar tabelas "limpas" (uma linha por seção × método, por superfície, por fatia) em xlsx/CSV,
+      para o usuário fazer os próprios gráficos.
+
+Gráficos por seção:
+- [ ] **Mapa de FS na grelha** (curvas de nível sobre os centros), como o Slide: mostra se o mínimo é bem definido.
+- [ ] **Faixa de superfícies críticas**: todas com FS até X % acima do mínimo, coloridas pelo FS.
+- [ ] **Gráficos ao longo da superfície** (eixo x): tensão normal na base, poropressão, resistência
+      mobilizada × disponível, forças entre fatias, linha de empuxo.
+
+Gráficos do lote:
+- [ ] **FS por seção e método** (barras) com a linha do FS-alvo.
+- [ ] **Comparação entre métodos** (ex.: Bishop × Spencer, dispersão com a reta 1:1).
+- [ ] **Superfícies críticas de volta ao CAD**: DXF com a superfície e o FS de cada seção, na posição da prancha.
+- [ ] Contagem de superfícies válidas/inválidas por seção (sinal de grelha ou limites ruins).
+
+Cenários (depende da fase 5):
+- [ ] FS × nível d'água, FS × sobrecarga, FS × parâmetro do solo (sensibilidade, gráfico tornado).
+
+Formato de entrega (decidir):
+- PNG + planilha (como hoje) · relatório HTML interativo (zoom, passar o mouse) · memorial PDF/Word por seção.
+
 ## Ideias futuras
 - Solo grampeado: inserir grampos e otimizar comprimentos (Crisp & Davies, 2022).
 - Retroanálise de parâmetros (FS = 1), sensibilidade e análise probabilística.
