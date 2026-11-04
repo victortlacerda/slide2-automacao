@@ -58,7 +58,7 @@ class Gravador(io.StringIO):
 
 
 def rodada_terminal(pasta):
-    respostas = iter(["m", "", "s", "1", "janela"])
+    respostas = iter(["m", "", "s", "1", "", "janela"])
     grav = Gravador()
 
     def falso_input(prompt=""):

@@ -84,10 +84,11 @@ def test_planilha_gerada():
         saida = Path(d) / "s.xlsx"
         with redirect_stdout(io.StringIO()):
             rc = cpp.main([str(dxf), "--unidade", "m", "--exagero-vertical", "1", "--zerar-x", "n",
-                           "--camadas", "0", "--janelas", "0,-12,50,14;95,-12,145,14", "--saida", str(saida)])
+                           "--camadas", "0", "--camada-na", "", "--janelas", "0,-12,50,14;95,-12,145,14",
+                           "--saida", str(saida)])
         assert rc == 0
         wb = openpyxl.load_workbook(saida)
-        assert wb.sheetnames == ["LEIA-ME", "Materiais", "Secoes", "Regioes", "Vertices", "Previas", "Origem"]
+        assert wb.sheetnames == ["LEIA-ME", "Materiais", "Secoes", "Regioes", "Vertices", "NA", "Cargas", "Previas", "Origem"]
         assert wb["Regioes"].max_row == 3
         cab = [c.value for c in wb["Secoes"][1]]
         assert "Cota real do ponto mais alto (m, opcional)" in cab and cab.index("Avisos") == 11
@@ -95,6 +96,7 @@ def test_planilha_gerada():
         dv = wb["Regioes"].data_validations.dataValidation[0]
         assert dv.formula1 == "=Materiais!$A$2:$A$21"
         assert len(wb["Previas"]._images) == 2
+        assert wb["NA"].max_row == 1 and wb["Cargas"]["B1"].value.startswith("Tipo")
         assert saida.with_suffix(".json").is_file()
         # repetir com --config deve dar o mesmo resultado sem perguntas
         with redirect_stdout(io.StringIO()):

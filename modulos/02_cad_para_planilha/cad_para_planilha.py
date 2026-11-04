@@ -52,7 +52,7 @@ except ImportError as exc:  # pragma: no cover
     sys.exit(f"Falta a biblioteca '{exc.name}'. Instale com:\n"
              "  pip install ezdxf shapely openpyxl matplotlib")
 
-VERSAO = "0.4"
+VERSAO = "0.5"
 EPS = 1e-9
 UNIDADES = {"m": 1.0, "cm": 0.01, "mm": 0.001}
 INSUNITS_NOME = {4: "mm", 5: "cm", 6: "m"}
@@ -456,6 +456,23 @@ def processar_secao(nome, itens, fator, exagero, zerar_x, tol, area_min):
     return sec
 
 
+def extrair_na(itens, fator, exagero, desloc_x):
+    """Linha do NA de uma seção: une os trechos e devolve os pontos da esquerda para a direita."""
+    if not itens:
+        return [], None
+    from shapely.ops import linemerge
+    linhas = [LineString([(x * fator - desloc_x, y * fator / exagero) for x, y in it["pts"]]) for it in itens]
+    unida = linemerge(unary_union(linhas))
+    partes = sorted(getattr(unida, "geoms", [unida]), key=lambda g: -g.length)
+    pts = [tuple(p[:2]) for p in partes[0].coords]
+    if pts[0][0] > pts[-1][0]:
+        pts.reverse()
+    aviso = None
+    if len(partes) > 1:
+        aviso = f"o NA tem {len(partes)} trechos separados; usei o mais longo"
+    return pts, aviso
+
+
 def aneis(poly):
     yield 0, list(poly.exterior.coords)[:-1]
     for k, r in enumerate(poly.interiors, 1):
@@ -533,7 +550,11 @@ def gravar_xlsx(caminho, secoes, config, previas):
         "   Coluna 'Cota real do ponto mais alto' (opcional): se a seção não está na cota real no desenho",
         "   (ex.: seções empilhadas na prancha), informe a cota verdadeira do ponto mais alto da seção;",
         "   a seção inteira é deslocada em Y para essa cota. Use quando NA, cargas ou relatório estiverem em cota real.",
-        "5) Não altere as abas Vertices e Origem; o próximo script lê as coordenadas de lá.",
+        "5) Aba NA (opcional): pontos do nível d'água por seção, da esquerda para a direita. Linhas com Origem = CAD",
+        "   vieram do desenho e acompanham a seção; linhas digitadas (Origem = planilha ou vazio) estão em cota real.",
+        "6) Aba Cargas (opcional): uma linha por carga. Distribuída: X início, X fim e kPa. Linha: X e kN/m.",
+        "   O X é o da seção (o mesmo das abas Vertices e Previas); a carga é posta sobre o terreno.",
+        "7) Não altere as abas Vertices e Origem; o próximo script lê as coordenadas de lá.",
         "",
         "Unidades: coordenadas em metros; cota (Y) mantém o valor do desenho.",
         "Modelo de resistência previsto: Mohr-Coulomb (γ, c', φ').",
@@ -598,6 +619,28 @@ def gravar_xlsx(caminho, secoes, config, previas):
     wsec.row_dimensions[1].height = 45
     wver.row_dimensions[1].height = 32
 
+    wna = wb.create_sheet("NA")
+    wna.append(["Seção", "Ordem", "X (m)", "Y (m)", "Origem (CAD/planilha)"])
+    estilizar_cabecalho(wna, 5)
+    for n, sec in enumerate(secoes, 1):
+        for k, (x, y) in enumerate(sec.get("na", []), 1):
+            wna.append([n, k, round(x, 6), round(y, 6), "CAD"])
+    largura(wna, [8, 8, 14, 14, 22])
+    wna.row_dimensions[1].height = 32
+
+    wc = wb.create_sheet("Cargas")
+    wc.append(["Seção", "Tipo (distribuida/linha)", "X início (m)", "X fim (m, só distribuída)",
+               "Intensidade (kPa ou kN/m)", "Ângulo (°, vazio = 270 = vertical p/ baixo)", "Observações"])
+    estilizar_cabecalho(wc, 7)
+    for r in range(2, 42):
+        for c in range(1, 7):
+            wc.cell(row=r, column=c).fill = amarelo
+    dvt = DataValidation(type="list", formula1='"distribuida,linha"', allow_blank=True)
+    wc.add_data_validation(dvt)
+    dvt.add("B2:B1000")
+    largura(wc, [8, 22, 13, 22, 24, 36, 36])
+    wc.row_dimensions[1].height = 45
+
     wp = wb.create_sheet("Previas")
     linha = 1
     for n, (sec, png) in enumerate(zip(secoes, previas), 1):
@@ -640,6 +683,7 @@ def main(argv=None) -> int:
     ap.add_argument("--exagero-vertical", type=float, help="Fator de exagero vertical do desenho (1 = sem exagero)")
     ap.add_argument("--zerar-x", choices=["s", "n"], help="Deslocar cada seção para começar em X = 0 (a cota Y não muda)")
     ap.add_argument("--camadas", help="Camadas CAD a usar, separadas por vírgula")
+    ap.add_argument("--camada-na", help="Camada CAD com o nível d'água (vazio = nenhuma)")
     ap.add_argument("--modo", choices=["janela", "coordenadas", "auto"], help="Como delimitar as seções")
     ap.add_argument("--janelas", help='Janelas nas unidades do desenho: "x0,y0,x1,y1;x0,y0,x1,y1"')
     ap.add_argument("--tol", type=float, default=None, help="Tolerância (m) para unir pontas de linha (padrão 0.001)")
@@ -713,7 +757,19 @@ def main(argv=None) -> int:
         faltam = [c for c in escolha if c not in contagem]
         if faltam or not escolha:
             raise ValueError(f"Camada(s) inexistente(s) ou nenhuma escolhida: {faltam or escolha}")
-        itens = [it for it in itens if it["camada"] in escolha]
+        camada_na = pick("camada_na")
+        if camada_na is None:
+            bruto = perguntar("Camada CAD do nível d'água (número; Enter = nenhuma)", "nenhuma")
+            if bruto.lower() == "nenhuma":
+                camada_na = ""
+            elif bruto.isdigit() and 0 < int(bruto) <= len(nomes):
+                camada_na = nomes[int(bruto) - 1]
+            else:
+                raise ValueError(f"Camada do NA inválida: {bruto}")
+        if camada_na and camada_na not in contagem:
+            raise ValueError(f"Camada do NA inexistente: {camada_na}")
+        itens_na = [it for it in itens if camada_na and it["camada"] == camada_na]
+        itens = [it for it in itens if it["camada"] in escolha and it["camada"] != camada_na]
 
         # --- como delimitar as seções ---
         if args.janelas:
@@ -754,10 +810,17 @@ def main(argv=None) -> int:
         for j, its, cort in zip(janelas, por_secao, cortadas):
             sec = processar_secao(j["nome"], its, fator, exagero, zerar_x, tol, area_min)
             sec["janela"] = j
+            sec["na"] = []
             if cort:
                 sec["avisos"].append(f"{cort} entidade(s) cortada(s) pela janela foram ignoradas "
                                      "(alargue a janela)")
             secoes.append(sec)
+        if itens_na:
+            por_na, _, _ = atribuir(itens_na, janelas)
+            for sec, its in zip(secoes, por_na):
+                sec["na"], aviso = extrair_na(its, fator, exagero, sec["desloc_x"])
+                if aviso:
+                    sec["avisos"].append(aviso)
         for a in range(len(janelas)):
             for b in range(a + 1, len(janelas)):
                 ja, jb = janelas[a], janelas[b]
@@ -779,7 +842,7 @@ def main(argv=None) -> int:
         config = {
             "versao_script": VERSAO, "dxf": str(dxf_path), "unidade": unidade, "exagero_vertical": exagero,
             "zerar_x": zerar_x, "tolerancia_m": tol, "tol_arco_m": tol_arco, "area_min_m2": area_min,
-            "camadas": escolha, "modo": modo, "janelas": janelas,
+            "camadas": escolha, "camada_na": camada_na, "modo": modo, "janelas": janelas,
         }
         gravar_xlsx(destino, secoes, config, previas)
         destino.with_suffix(".json").write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")
