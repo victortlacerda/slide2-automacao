@@ -15,7 +15,7 @@
 Precisa das amostras do Slide2, cada uma salva a partir do `vazio.slim` com **uma única mudança**
 (anotar os valores digitados):
 - [x] Duas camadas: fronteira interna + 2 materiais com valores diferentes (amostra a01).
-- [ ] Só Bishop; só Fellenius; Bishop + Fellenius (e outros métodos que forem usados).
+- [x] Um arquivo por método e um com todos: `methods` é máscara de bits (amostras em `docs/amostras_slide2/metodos`).
 - [x] Direção da ruptura esquerda → direita (amostra a01).
 - [x] Primeira versão já com nível d'água e sobrecarga (decisão #8).
 - [x] NA que não coincide com vértices (amostra a02).

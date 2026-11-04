@@ -20,7 +20,7 @@ Ao gerar um novo modelo, os três membros são renomeados para o nome do novo ar
 
 | Bloco | Situação |
 |---|---|
-| `model description` | Parâmetros globais. `direction: right to left` = sentido da ruptura. `methods: 6` = métodos ativos (**codificação desconhecida**). `units: metric`, `nummaterials: 20`, `numanchors: 20`. |
+| `model description` | Parâmetros globais. `direction: right to left` = sentido da ruptura. `methods` = métodos ativos (máscara de bits, ver abaixo). `units: metric`, `nummaterials: 20`, `numanchors: 20`. |
 | `material types` | `soilN = type: 0 water: 1 wtable: 0 c: <c> phi: <φ> uw: <γ> hutype: 0 withru: 0`. Editado pelo módulo 01. |
 | `design standard array` | Coeficientes parciais (Eurocode 7 DA1/DA2/DA3, BS 8006). |
 | `anchor types` | `anchorN = type: 1 fa: 0 sp: 1 cap: 100` (campos de grampo/tirante: **a mapear**). |
@@ -86,6 +86,28 @@ A confirmar no módulo 03:
   nessa cota, o plano é inserir o vértice no contorno, como acontece com a interface de material.
 - `dist load group` tem `begin`/`end`: provavelmente uma carga distribuída que atravessa uma quebra do
   terreno vira várias linhas em `forces`, agrupadas por esse intervalo.
+
+## Métodos de equilíbrio limite (amostras em `amostras_slide2/metodos/`)
+
+Geradas a partir da a02, uma por método e uma com todos. `methods` é a **soma** dos valores dos
+métodos marcados (máscara de bits):
+
+| Método | Valor |
+|---|---|
+| Ordinary / Fellenius | 1 |
+| Bishop simplificado | 2 |
+| Janbu simplificado | 4 |
+| Spencer | 8 |
+| Corps of Engineers #1 | 16 |
+| Corps of Engineers #2 | 32 |
+| Lowe-Karafiath | 64 |
+| GLE / Morgenstern-Price | 128 |
+| Janbu corrigido | 256 |
+
+Exemplos: Bishop + Janbu simplificado = 6 (o `vazio.slim`); todos = 511.
+Com GLE/M-P marcado, o arquivo ganha, logo depois de `model description`, o bloco
+`side force function:` com `type: half_sine` (função de forças entre fatias padrão).
+Nenhuma outra linha muda entre as amostras.
 
 ## Origem dos dados no módulo 03 (decisão do usuário)
 
